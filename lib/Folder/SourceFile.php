@@ -24,7 +24,6 @@ declare(strict_types=1);
 namespace OCA\VirtualFolder\Folder;
 
 use OCP\Files\Cache\ICacheEntry;
-use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\Storage\IStorage;
@@ -32,18 +31,28 @@ use OCP\IUser;
 
 class SourceFile {
 	/** @var ICacheEntry */
-	public $cacheEntry;
+	private $cacheEntry;
 	/** @var string */
-	public $storageId;
-	/** @var IRootFolder */
-	public $rootFolder;
+	private $storageId;
+	/** @var callable */
+	private $rootFolderFactory;
+	/** @var IUser */
+	private $sourceUser;
+
+	public function __construct(ICacheEntry $cacheEntry, string $storageId, callable $rootFolderFactory, IUser $sourceUser) {
+		$this->cacheEntry = $cacheEntry;
+		$this->storageId = $storageId;
+		$this->rootFolderFactory = $rootFolderFactory;
+		$this->sourceUser = $sourceUser;
+	}
 
 	public function getCacheEntry(): ICacheEntry {
 		return $this->cacheEntry;
 	}
 
-	public function getSourceStorage(IUser $user): IStorage {
-		$userFolder = $this->rootFolder->getUserFolder($user->getUID());
+	public function getSourceStorage(): IStorage {
+		$rootFolder = ($this->rootFolderFactory)();
+		$userFolder = $rootFolder->getUserFolder($this->sourceUser->getUID());
 		$nodes = $userFolder->getById($this->cacheEntry->getId());
 		if ($node = current($nodes)) {
 			/** @var Node $node */

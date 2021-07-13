@@ -62,18 +62,18 @@ class VirtualFolderMountProvider implements IMountProvider {
 		];
 
 		foreach ($folder->getSourceFiles() as $sourceFile) {
-			$mounts[] = new VirtualFolderMount($this->getStorageForSourceFile($sourceFile, $user), $baseMount . '/' . $sourceFile->getCacheEntry()->getName(), [], $loader);
+			$mounts[] = new VirtualFolderMount($this->getStorageForSourceFile($sourceFile), $baseMount . '/' . $sourceFile->getCacheEntry()->getName(), [], $loader);
 		}
 
 		return $mounts;
 	}
 
-	private function getStorageForSourceFile(SourceFile $sourceFile, IUser $user): LazyWrapper {
+	private function getStorageForSourceFile(SourceFile $sourceFile): LazyWrapper {
 		return new LazyWrapper([
 			'source_root_info' => $sourceFile->getCacheEntry(),
-			'source_factory' => function () use ($sourceFile, $user) {
+			'source_factory' => function () use ($sourceFile) {
 				return new Jail([
-					'storage' => $sourceFile->getSourceStorage($user),
+					'storage' => $sourceFile->getSourceStorage(),
 					'root' => $sourceFile->getCacheEntry()->getPath()
 				]);
 			},
