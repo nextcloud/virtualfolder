@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Mount;
 
-use OC\Files\Cache\CacheEntry;
 use OC\Files\Storage\Wrapper\Jail;
 use OCA\VirtualFolder\Folder\SourceFile;
 use OCA\VirtualFolder\Folder\VirtualFolder;
