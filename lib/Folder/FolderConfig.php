@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Folder;
 
-
 class FolderConfig {
 	/** @var int */
 	private $id;

@@ -37,7 +37,7 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function boot(IBootContext $context): void {
-		$context->injectFn(function(IMountProviderCollection $mountProviderCollection, VirtualFolderMountProvider $mountProvider) {
+		$context->injectFn(function (IMountProviderCollection $mountProviderCollection, VirtualFolderMountProvider $mountProvider) {
 			$mountProviderCollection->registerProvider($mountProvider);
 		});
 	}

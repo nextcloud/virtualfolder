@@ -41,10 +41,10 @@ class LazyCacheWrapperTest extends CacheTest {
 		$this->storage2->getScanner('')->scan('');
 		$cache = new Cache($this->storage);
 		$cache2 = new Cache($this->storage2);
-		$this->cache = new LazeCacheWrapper($cache->get(''), function() use ($cache) {
+		$this->cache = new LazeCacheWrapper($cache->get(''), function () use ($cache) {
 			return $cache;
 		});
-		$this->cache2 = new LazeCacheWrapper($cache2->get(''), function() use ($cache2) {
+		$this->cache2 = new LazeCacheWrapper($cache2->get(''), function () use ($cache2) {
 			return $cache2;
 		});
 	}

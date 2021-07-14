@@ -52,7 +52,7 @@ class SourceFileTest extends TestCase {
 
 		$this->registerMount("source_file_test", $storage, "source_file_test/files/test");
 
-		$sourceFile = new SourceFile($cacheEntry, $storage->getId(), function() {
+		$sourceFile = new SourceFile($cacheEntry, $storage->getId(), function () {
 			return \OC::$server->get(IRootFolder::class);
 		}, $user);
 

@@ -69,7 +69,7 @@ class VirtualFolderFactory {
 				throw new NotFoundException("Source user not found for virtual folder");
 			}
 			$sourceFiles = $this->getSourceFilesFromFileIds($sourceUser, $rootFolderFactory, $folder->getSourceFileIds());
-			usort($sourceFiles, function(SourceFile $a, SourceFile $b) {
+			usort($sourceFiles, function (SourceFile $a, SourceFile $b) {
 				return $a->getCacheEntry()->getId() <=> $b->getCacheEntry()->getId();
 			});
 			return new VirtualFolder($sourceFiles, $folder->getMountPoint());

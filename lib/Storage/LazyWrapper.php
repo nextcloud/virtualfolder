@@ -57,7 +57,7 @@ class LazyWrapper extends Wrapper {
 		$this->sourceRootInfo = $arguments['source_root_info'];
 		$this->sourceFactory = $arguments['source_factory'];
 		$this->storageId = $arguments['storage_id'];
-		$this->cache = new LazeCacheWrapper($this->sourceRootInfo, function() {
+		$this->cache = new LazeCacheWrapper($this->sourceRootInfo, function () {
 			return $this->getWrapperStorage()->getCache();
 		});
 	}

@@ -23,12 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Command;
 
-
 use OCA\VirtualFolder\Folder\FolderConfigManager;
-use OCP\Files\Folder;
-use OCP\Files\NotFoundException;
-use OCP\IUser;
-use OCP\IUserManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

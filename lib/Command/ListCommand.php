@@ -49,7 +49,7 @@ class ListCommand extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$folders = $this->configManager->getAllFolders();
 
-		$table = array_map(function(FolderConfig $folder) {
+		$table = array_map(function (FolderConfig $folder) {
 			return [
 				"id" => $folder->getId(),
 				"source_user" => $folder->getSourceUserId(),
