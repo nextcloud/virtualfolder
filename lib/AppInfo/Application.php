@@ -21,6 +21,8 @@
 
 namespace OCA\VirtualFolder\AppInfo;
 
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
+use OCA\VirtualFolder\Listeners\LoadAdditionalScriptsListener;
 use OCA\VirtualFolder\Mount\VirtualFolderMountProvider;
 use \OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -34,6 +36,7 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
+		$context->registerEventListener(LoadAdditionalScriptsEvent::class, LoadAdditionalScriptsListener::class);
 	}
 
 	public function boot(IBootContext $context): void {
