@@ -32,29 +32,25 @@ use OCP\IUser;
 use OCP\IUserManager;
 use Psr\Container\ContainerInterface;
 
-class VirtualFolderManager {
+class VirtualFolderFactory {
 	/** @var IDBConnection */
 	private $connection;
 	/** @var ContainerInterface */
 	private $rootFolderContainer;
 	/** @var IUserManager */
 	private $userManager;
-	/** @var FolderConfigManager */
-	private $configManager;
 
-	public function __construct(IDBConnection $connection, ContainerInterface $rootFolderContainer, IUserManager $userManager, FolderConfigManager $configManager) {
+	public function __construct(IDBConnection $connection, ContainerInterface $rootFolderContainer, IUserManager $userManager) {
 		$this->connection = $connection;
 		$this->rootFolderContainer = $rootFolderContainer;
 		$this->userManager = $userManager;
-		$this->configManager = $configManager;
 	}
 
 	/**
-	 * @param IUser $user
+	 * @param FolderConfig[] $folders
 	 * @return VirtualFolder[]
 	 */
-	public function getFoldersForUser(IUser $user): array {
-		$folders = $this->configManager->getFoldersForUser($user->getUID());
+	public function createFolders(array $folders): array {
 		$rootFolderFactory = function () {
 			return $this->rootFolderContainer->get(IRootFolder::class);
 		};
@@ -64,6 +60,9 @@ class VirtualFolderManager {
 				throw new NotFoundException("Source user not found for virtual folder");
 			}
 			$sourceFiles = $this->getSourceFilesFromFileIds($sourceUser, $rootFolderFactory, $folder->getSourceFileIds());
+			usort($sourceFiles, function(SourceFile $a, SourceFile $b) {
+				return $a->getCacheEntry()->getId() <=> $b->getCacheEntry()->getId();
+			});
 			return new VirtualFolder($sourceFiles, $folder->getMountPoint());
 		}, $folders);
 	}
@@ -73,7 +72,7 @@ class VirtualFolderManager {
 		$query->select('fileid', 'storage', 'path', 'parent', 'name', 'mimetype', 'mimepart', 'size', 'mtime', 'storage_mtime', 'encrypted', 'unencrypted_size', 'etag', 'permissions', 'checksum', 'id')
 			->from('filecache', 'f')
 			->innerJoin('f', 'storages', 's', $query->expr()->eq('storage', 'numeric_id'))
-			->where($query->expr()->in('fileid', $query->createNamedParameter($sourceUser, IQueryBuilder::PARAM_INT_ARRAY)));
+			->where($query->expr()->in('fileid', $query->createNamedParameter($sourceFileIds, IQueryBuilder::PARAM_INT_ARRAY)));
 		$results = $query->executeQuery()->fetchAll();
 		return array_map(function (array $row) use ($rootFolderFactory, $sourceUser) {
 			$cacheEntry = new CacheEntry($row);

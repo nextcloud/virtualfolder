@@ -24,9 +24,10 @@ declare(strict_types=1);
 namespace OCA\VirtualFolder\Mount;
 
 use OC\Files\Storage\Wrapper\Jail;
+use OCA\VirtualFolder\Folder\FolderConfigManager;
 use OCA\VirtualFolder\Folder\SourceFile;
 use OCA\VirtualFolder\Folder\VirtualFolder;
-use OCA\VirtualFolder\Folder\VirtualFolderManager;
+use OCA\VirtualFolder\Folder\VirtualFolderFactory;
 use OCA\VirtualFolder\Storage\EmptyStorage;
 use OCA\VirtualFolder\Storage\LazyWrapper;
 use OCP\Files\Config\IMountProvider;
@@ -34,27 +35,30 @@ use OCP\Files\Storage\IStorageFactory;
 use OCP\IUser;
 
 class VirtualFolderMountProvider implements IMountProvider {
-	/** @var VirtualFolderManager */
-	private $manager;
+	/** @var VirtualFolderFactory */
+	private $factory;
+	/** @var FolderConfigManager */
+	private $configManager;
 
-	public function __construct(VirtualFolderManager $manager) {
-		$this->manager = $manager;
+	public function __construct(VirtualFolderFactory $manager, FolderConfigManager $configManager) {
+		$this->factory = $manager;
+		$this->configManager = $configManager;
 	}
 
 	public function getMountsForUser(IUser $user, IStorageFactory $loader) {
-		$folders = $this->manager->getFoldersForUser($user);
-		return array_merge(array_map(function(VirtualFolder $folder) use ($user, $loader) {
-			return $this->getMountsForFolder($user, $folder, $loader);
+		$folderConfigs = $this->configManager->getFoldersForUser($user->getUID());
+		$folders = $this->factory->createFolders($folderConfigs);
+		return array_merge(array_map(function(VirtualFolder $folder) use ($loader) {
+			return $this->getMountsForFolder($folder, $loader);
 		}, $folders));
 	}
 
 	/**
-	 * @param IUser $user
 	 * @param VirtualFolder $folder
 	 * @param IStorageFactory $loader
 	 * @return VirtualFolderMount[]
 	 */
-	private function getMountsForFolder(IUser $user, VirtualFolder $folder, IStorageFactory $loader): array {
+	private function getMountsForFolder(VirtualFolder $folder, IStorageFactory $loader): array {
 		$baseMount = $folder->getMountPoint();
 		$mounts = [
 			new VirtualFolderMount(EmptyStorage::class, $baseMount, [], $loader)
