@@ -21,10 +21,12 @@
 
 namespace OCA\VirtualFolder\AppInfo;
 
+use OCA\VirtualFolder\Mount\VirtualFolderMountProvider;
 use \OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\Files\Config\IMountProviderCollection;
 
 class Application extends App implements IBootstrap {
 	public function __construct(array $urlParams = []) {
@@ -35,5 +37,8 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function boot(IBootContext $context): void {
+		$context->injectFn(function(IMountProviderCollection $mountProviderCollection, VirtualFolderMountProvider $mountProvider) {
+			$mountProviderCollection->registerProvider($mountProvider);
+		});
 	}
 }
