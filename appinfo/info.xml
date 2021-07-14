@@ -23,4 +23,10 @@
 	<repository type="git">
 		https://github.com/icewind1991/virtualfolder.git
 	</repository>
+
+	<commands>
+		<command>OCA\VirtualFolder\Command\ListCommand</command>
+		<command>OCA\VirtualFolder\Command\Create</command>
+		<command>OCA\VirtualFolder\Command\Delete</command>
+	</commands>
 </info>

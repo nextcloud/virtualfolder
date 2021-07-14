@@ -45,27 +45,21 @@ class FolderConfigManager {
 			->innerJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'))
 			->where($query->expr()->eq('target_user', $query->createNamedParameter($targetUserId)));
 		$rows = $query->executeQuery()->fetchAll();
-		$folders = [];
 
-		foreach ($rows as $row) {
-			$folderId = $row['folder_id'];
-			if (!isset($folders[$folderId])) {
-				$folders[$folderId] = [
-					'id' => (int)$folderId,
-					'source_user' => $row['source_user'],
-					'target_user' => $row['target_user'],
-					'mount_point' => $row['mount_point'],
-					'files' => [],
-				];
-			}
-			$folders[$folderId]['files'][] = (int)$row['file_id'];
-		}
+		return $this->fromRows($rows);
+	}
 
-		ksort($folders);
+	/**
+	 * @return FolderConfig[]
+	 */
+	public function getAllFolders(): array {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('folder.folder_id', 'source_user', 'target_user', 'mount_point', 'file_id')
+			->from('virtual_folders', 'folder')
+			->innerJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'));
+		$rows = $query->executeQuery()->fetchAll();
 
-		return array_map(function (array $folder) {
-			return new FolderConfig($folder['id'], $folder['source_user'], $folder['target_user'], $folder['mount_point'], $folder['files']);
-		}, array_values($folders));
+		return $this->fromRows($rows);
 	}
 
 	public function deleteFolder(int $id) {
@@ -108,5 +102,33 @@ class FolderConfigManager {
 		}
 
 		return new FolderConfig($folderId, $sourceUserId, $targetUserId, $mountPoint, $fileIds);
+	}
+
+	/**
+	 * @param array $rows
+	 * @return FolderConfig[]
+	 */
+	public function fromRows(array $rows): array {
+		$folders = [];
+
+		foreach ($rows as $row) {
+			$folderId = $row['folder_id'];
+			if (!isset($folders[$folderId])) {
+				$folders[$folderId] = [
+					'id' => (int)$folderId,
+					'source_user' => $row['source_user'],
+					'target_user' => $row['target_user'],
+					'mount_point' => $row['mount_point'],
+					'files' => [],
+				];
+			}
+			$folders[$folderId]['files'][] = (int)$row['file_id'];
+		}
+
+		ksort($folders);
+
+		return array_map(function (array $folder) {
+			return new FolderConfig($folder['id'], $folder['source_user'], $folder['target_user'], $folder['mount_point'], $folder['files']);
+		}, array_values($folders));
 	}
 }
