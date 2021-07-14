@@ -24,11 +24,16 @@ declare(strict_types=1);
 namespace OCA\VirtualFolder\Storage;
 
 use OC\Files\Cache\FailedCache;
+use OC\Files\Cache\Storage;
+use OC\Files\ObjectStore\HomeObjectStoreStorage;
+use OC\Files\Storage\Common;
 use OC\Files\Storage\FailedStorage;
+use OC\Files\Storage\Home;
 use OC\Files\Storage\Wrapper\Wrapper;
 use OC\User\NoUserException;
 use OCP\Files\Cache\ICache;
 use OCP\Files\Cache\ICacheEntry;
+use OCP\Files\IHomeStorage;
 use OCP\Files\NotFoundException;
 use OCP\Files\Storage\IStorage;
 
@@ -52,6 +57,9 @@ class LazyWrapper extends Wrapper {
 
 	/** @var string */
 	private $storageId;
+
+	/** @var Storage|null */
+	private $storageCache = null;
 
 	public function __construct($arguments) {
 		$this->sourceRootInfo = $arguments['source_root_info'];
@@ -90,8 +98,46 @@ class LazyWrapper extends Wrapper {
 		return $this->cache;
 	}
 
+	public function getStorageCache($storage = null) {
+		if (!$storage) {
+			$storage = $this;
+		}
+		if (!isset($this->storageCache)) {
+			$this->storageCache = new Storage($storage);
+		}
+		return $this->storageCache;
+	}
+
 	public function getWrapperStorage() {
 		$this->init();
 		return $this->storage;
+	}
+
+	public function instanceOfStorage($class) {
+		$class = ltrim($class, '\\');
+		if ($class === Common::class) {
+			return true;
+		}
+		if ($class === Home::class || $class === HomeObjectStoreStorage::class || $class === IHomeStorage::class) {
+			return false;
+		}
+		if ($class === "OCA\Files_Sharing\SharedStorage") {
+			return false;
+		}
+		return parent::instanceOfStorage($class);
+	}
+
+	public function setMountOptions($options) {
+		if ($options) {
+			parent::setMountOptions($options);
+		}
+	}
+
+	public function isLocal() {
+		if (strpos($this->getId(), "home::") === 0 || strpos($this->getId(), "local::") === 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

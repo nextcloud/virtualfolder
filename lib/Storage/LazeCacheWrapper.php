@@ -60,6 +60,13 @@ class LazeCacheWrapper extends CacheWrapper {
 		}
 	}
 
+	public function getId($file) {
+		if ($this->rootUnchanged && ($file === '' || $file === $this->sourceRootInfo->getId())) {
+			return $this->sourceRootInfo->getId();
+		}
+		return parent::getId($file);
+	}
+
 	public function get($file) {
 		if ($this->rootUnchanged && ($file === '' || $file === $this->sourceRootInfo->getId())) {
 			return $this->formatCacheEntry(clone $this->sourceRootInfo);
