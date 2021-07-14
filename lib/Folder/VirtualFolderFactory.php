@@ -82,7 +82,7 @@ class VirtualFolderFactory {
 			->from('filecache', 'f')
 			->innerJoin('f', 'storages', 's', $query->expr()->eq('storage', 'numeric_id'))
 			->where($query->expr()->in('fileid', $query->createNamedParameter($sourceFileIds, IQueryBuilder::PARAM_INT_ARRAY)));
-		$results = $query->executeQuery()->fetchAll();
+		$results = $query->execute()->fetchAll();
 		return array_map(function (array $row) use ($rootFolderFactory, $sourceUser) {
 			$row['mimetype'] = $this->mimeTypeLoader->getMimetypeById($row['mimetype']);
 			$row['mimepart'] = $this->mimeTypeLoader->getMimetypeById($row['mimepart']);

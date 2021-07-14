@@ -44,7 +44,7 @@ class FolderConfigManager {
 			->from('virtual_folders', 'folder')
 			->innerJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'))
 			->where($query->expr()->eq('target_user', $query->createNamedParameter($targetUserId)));
-		$rows = $query->executeQuery()->fetchAll();
+		$rows = $query->execute()->fetchAll();
 
 		return $this->fromRows($rows);
 	}
@@ -57,7 +57,7 @@ class FolderConfigManager {
 		$query->select('folder.folder_id', 'source_user', 'target_user', 'mount_point', 'file_id')
 			->from('virtual_folders', 'folder')
 			->innerJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'));
-		$rows = $query->executeQuery()->fetchAll();
+		$rows = $query->execute()->fetchAll();
 
 		return $this->fromRows($rows);
 	}
@@ -66,12 +66,12 @@ class FolderConfigManager {
 		$query = $this->connection->getQueryBuilder();
 		$query->delete('virtual_folder_files')
 			->where($query->expr()->eq('folder_id', $query->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
-		$query->executeStatement();
+		$query->execute();
 
 		$query = $this->connection->getQueryBuilder();
 		$query->delete('virtual_folders')
 			->where($query->expr()->eq('folder_id', $query->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
-		$query->executeStatement();
+		$query->execute();
 	}
 
 	/**
@@ -88,7 +88,7 @@ class FolderConfigManager {
 				'target_user' => $query->createNamedParameter($targetUserId),
 				'mount_point' => $query->createNamedParameter($mountPoint),
 			]);
-		$query->executeStatement();
+		$query->execute();
 		$folderId = $query->getLastInsertId();
 
 		foreach ($fileIds as $fileId) {
@@ -98,7 +98,7 @@ class FolderConfigManager {
 					'folder_id' => $query->createNamedParameter($folderId, IQueryBuilder::PARAM_INT),
 					'file_id' => $query->createNamedParameter($fileId, IQueryBuilder::PARAM_INT),
 				]);
-			$query->executeStatement();
+			$query->execute();
 		}
 
 		return new FolderConfig($folderId, $sourceUserId, $targetUserId, $mountPoint, $fileIds);
