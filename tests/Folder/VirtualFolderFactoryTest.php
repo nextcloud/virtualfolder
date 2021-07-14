@@ -27,6 +27,7 @@ use OC\AppFramework\Utility\SimpleContainer;
 use OC\Files\Storage\Temporary;
 use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\VirtualFolderFactory;
+use OCP\Files\IMimeTypeLoader;
 use OCP\Files\Storage\IStorage;
 use OCP\IDBConnection;
 use OCP\IUser;
@@ -59,7 +60,7 @@ class VirtualFolderFactoryTest extends TestCase {
 			});
 
 		$container = new SimpleContainer();
-		$this->factory = new VirtualFolderFactory(\OC::$server->get(IDBConnection::class), $container, $this->userManager);
+		$this->factory = new VirtualFolderFactory(\OC::$server->get(IDBConnection::class), $container, $this->userManager, \OC::$server->get(IMimeTypeLoader::class));
 		$this->storage = new Temporary([]);
 		$this->cache = $this->storage->getCache();
 	}
@@ -77,6 +78,7 @@ class VirtualFolderFactoryTest extends TestCase {
 		$this->assertCount(1, $folders[0]->getSourceFiles());
 		$this->assertEquals($id1, $folders[0]->getSourceFiles()[0]->getCacheEntry()->getId());
 		$this->assertEquals('foo1', $folders[0]->getSourceFiles()[0]->getCacheEntry()->getPath());
+		$this->assertEquals('text/plain', $folders[0]->getSourceFiles()[0]->getCacheEntry()->getMimeType());
 	}
 
 	public function testMultipleFolders() {

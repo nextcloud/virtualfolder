@@ -25,6 +25,7 @@ namespace OCA\VirtualFolder\Folder;
 
 use OC\Files\Cache\CacheEntry;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\IMimeTypeLoader;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
@@ -39,11 +40,19 @@ class VirtualFolderFactory {
 	private $rootFolderContainer;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var IMimeTypeLoader */
+	private $mimeTypeLoader;
 
-	public function __construct(IDBConnection $connection, ContainerInterface $rootFolderContainer, IUserManager $userManager) {
+	public function __construct(
+		IDBConnection $connection,
+		ContainerInterface $rootFolderContainer,
+		IUserManager $userManager,
+		IMimeTypeLoader $mimeTypeLoader
+	) {
 		$this->connection = $connection;
 		$this->rootFolderContainer = $rootFolderContainer;
 		$this->userManager = $userManager;
+		$this->mimeTypeLoader = $mimeTypeLoader;
 	}
 
 	/**
@@ -75,6 +84,8 @@ class VirtualFolderFactory {
 			->where($query->expr()->in('fileid', $query->createNamedParameter($sourceFileIds, IQueryBuilder::PARAM_INT_ARRAY)));
 		$results = $query->executeQuery()->fetchAll();
 		return array_map(function (array $row) use ($rootFolderFactory, $sourceUser) {
+			$row['mimetype'] = $this->mimeTypeLoader->getMimetypeById($row['mimetype']);
+			$row['mimepart'] = $this->mimeTypeLoader->getMimetypeById($row['mimepart']);
 			$cacheEntry = new CacheEntry($row);
 			return new SourceFile($cacheEntry, $row['id'], $rootFolderFactory, $sourceUser);
 		}, $results);

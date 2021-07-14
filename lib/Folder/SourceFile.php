@@ -58,7 +58,7 @@ class SourceFile {
 			/** @var Node $node */
 			return $node->getStorage();
 		} else {
-			return throw new NotFoundException("Source file for virtual folder not found");
+			throw new NotFoundException("Source file for virtual folder not found");
 		}
 	}
 

@@ -45,23 +45,24 @@ class VirtualFolderMountProvider implements IMountProvider {
 		$this->configManager = $configManager;
 	}
 
-	public function getMountsForUser(IUser $user, IStorageFactory $loader) {
+	public function getMountsForUser(IUser $user, IStorageFactory $loader): array {
 		$folderConfigs = $this->configManager->getFoldersForUser($user->getUID());
 		$folders = $this->factory->createFolders($folderConfigs);
-		return array_merge(array_map(function(VirtualFolder $folder) use ($loader) {
-			return $this->getMountsForFolder($folder, $loader);
+		return array_merge(...array_map(function (VirtualFolder $folder) use ($loader, $user) {
+			return $this->getMountsForFolder($folder, $loader, $user);
 		}, $folders));
 	}
 
 	/**
 	 * @param VirtualFolder $folder
 	 * @param IStorageFactory $loader
+	 * @param IUser $user
 	 * @return VirtualFolderMount[]
 	 */
-	private function getMountsForFolder(VirtualFolder $folder, IStorageFactory $loader): array {
-		$baseMount = $folder->getMountPoint();
+	private function getMountsForFolder(VirtualFolder $folder, IStorageFactory $loader, IUser $user): array {
+		$baseMount = '/' . $user->getUID() . '/files/' . trim($folder->getMountPoint(), '/');
 		$mounts = [
-			new VirtualFolderMount(EmptyStorage::class, $baseMount, [], $loader)
+			new VirtualFolderMount(EmptyStorage::class, $baseMount, [], $loader),
 		];
 
 		foreach ($folder->getSourceFiles() as $sourceFile) {
@@ -77,7 +78,7 @@ class VirtualFolderMountProvider implements IMountProvider {
 			'source_factory' => function () use ($sourceFile) {
 				return new Jail([
 					'storage' => $sourceFile->getSourceStorage(),
-					'root' => $sourceFile->getCacheEntry()->getPath()
+					'root' => $sourceFile->getCacheEntry()->getPath(),
 				]);
 			},
 			'storage_id' => $sourceFile->getSourceStorageId(),
