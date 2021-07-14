@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['7.4', '8.0']
+        php-versions: ['8.0']
     name: php${{ matrix.php-versions }} lint
     steps:
     - name: Checkout
@@ -31,7 +31,7 @@ jobs:
       - name: Set up php${{ matrix.php-versions }}
         uses: shivammathur/setup-php@master
         with:
-          php-version: 7.4
+          php-version: 8.0
           tools: composer:v1
           coverage: none
           extensions: inotify
