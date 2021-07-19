@@ -72,7 +72,6 @@ class LazyWrapper extends Wrapper {
 
 	private function init() {
 		if (!$this->initialized) {
-			$this->initialized = true;
 			try {
 				$this->storage = ($this->sourceFactory)();
 			} catch (NotFoundException $e) {
@@ -87,6 +86,7 @@ class LazyWrapper extends Wrapper {
 				$this->storage = new FailedStorage(['exception' => $e]);
 				$this->cache = new FailedCache();
 			}
+			$this->initialized = true;
 		}
 	}
 
