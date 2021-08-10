@@ -26,6 +26,7 @@ namespace OCA\VirtualFolder\Command;
 use OC\Core\Command\Base;
 use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -49,7 +50,7 @@ class ListCommand extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$folders = $this->configManager->getAllFolders();
 
-		$table = array_map(function (FolderConfig $folder) {
+		$rows = array_map(function (FolderConfig $folder) {
 			return [
 				"id" => $folder->getId(),
 				"source_user" => $folder->getSourceUserId(),
@@ -59,8 +60,21 @@ class ListCommand extends Base {
 			];
 		}, $folders);
 
-		$this->writeArrayInOutputFormat($input, $output, $table);
-
+		switch ($input->getOption('output')) {
+			case self::OUTPUT_FORMAT_JSON:
+				$output->writeln(json_encode($rows));
+				break;
+			case self::OUTPUT_FORMAT_JSON_PRETTY:
+				$output->writeln(json_encode($rows, JSON_PRETTY_PRINT));
+				break;
+			default:
+				$table = new Table($output);
+				$table
+					->setHeaders(['ID', 'Source User', 'Target User', 'Mountpoint', 'Files'])
+					->setRows($rows)
+				;
+				$table->render();
+		}
 		return 0;
 	}
 }
