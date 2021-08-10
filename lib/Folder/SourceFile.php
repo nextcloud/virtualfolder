@@ -65,4 +65,8 @@ class SourceFile {
 	public function getSourceStorageId(): string {
 		return $this->storageId;
 	}
+
+	public function getSourceUser(): IUser {
+		return $this->sourceUser;
+	}
 }

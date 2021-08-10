@@ -61,10 +61,14 @@ class LazyWrapper extends Wrapper {
 	/** @var Storage|null */
 	private $storageCache = null;
 
+	/** @var string|null */
+	private $owner;
+
 	public function __construct($arguments) {
 		$this->sourceRootInfo = $arguments['source_root_info'];
 		$this->sourceFactory = $arguments['source_factory'];
 		$this->storageId = $arguments['storage_id'];
+		$this->owner = $arguments['owner'] ?? null;
 		$this->cache = new LazeCacheWrapper($this->sourceRootInfo, function () {
 			return $this->getWrapperStorage()->getCache();
 		});
@@ -138,6 +142,14 @@ class LazyWrapper extends Wrapper {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public function getOwner($path) {
+		if ($this->owner !== null) {
+			return $this->owner;
+		} else {
+			return parent::getOwner($path);
 		}
 	}
 }
