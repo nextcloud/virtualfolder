@@ -25,6 +25,7 @@ namespace OCA\VirtualFolder\Tests\Folder;
 
 use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
+use OCA\VirtualFolder\Storage\EmptyStorage;
 use OCP\IDBConnection;
 use Test\TestCase;
 
@@ -80,5 +81,27 @@ class FolderConfigManagerTest extends TestCase {
 
 		$folders = $this->configManager->getFoldersForUser('target4');
 		$this->assertCount(0, $folders);
+	}
+
+	private function scanVirtualRoot(int $id): int {
+		$storage = new EmptyStorage(['storage_id' => 'virtual_' . $id]);
+		$storage->getScanner()->scan('');
+		return $storage->getCache()->getId('');
+	}
+
+	public function testGetMultipleByRootId() {
+		$createdFolder1 = $this->newFolder('source1', 'target2','get_multiple1', [10, 20, 30, 40, 50]);
+		$createdFolder2 = $this->newFolder('source2', 'target2','get_multiple2', [11, 21, 31, 41, 51]);
+		$createdFolder3 = $this->newFolder('source2', 'target3','get_multiple3', [12, 22, 32, 42, 52]);
+
+		$rootId1 = $this->scanVirtualRoot($createdFolder1->getId());
+		$rootId2 = $this->scanVirtualRoot($createdFolder2->getId());
+		$rootId3 = $this->scanVirtualRoot($createdFolder3->getId());
+
+		$folders = $this->configManager->getAllByRootIds();
+		$this->assertCount(3, $folders);
+		$this->assertEquals($createdFolder1, $folders[$rootId1]);
+		$this->assertEquals($createdFolder2, $folders[$rootId2]);
+		$this->assertEquals($createdFolder3, $folders[$rootId3]);
 	}
 }

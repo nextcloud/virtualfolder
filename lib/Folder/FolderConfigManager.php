@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Folder;
 
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
@@ -105,30 +107,59 @@ class FolderConfigManager {
 	}
 
 	/**
+	 * Get a list of all configured folders, indexed by the fileid of the root of the virtual folder
+	 *
+	 * @return array<int, FolderConfig>
+	 */
+	public function getAllByRootIds(): array {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('folder.folder_id', 'source_user', 'target_user', 'mount_point', 'file_id', 'f.fileid')
+			->from('virtual_folders', 'folder')
+			->innerJoin('folder', 'storages', 's', $query->expr()->eq('s.id', $query->func()->concat(
+				$query->expr()->literal("virtual_"),
+				$query->expr()->castColumn('folder.folder_id', Types::STRING)
+			)))
+			->innerJoin('s', 'filecache', 'f', $query->expr()->andX(
+				$query->expr()->eq('path_hash', $query->expr()->literal(md5(''))),
+				$query->expr()->eq('s.numeric_id', 'f.storage')
+			))
+			->innerJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'));
+		$rows = $query->execute()->fetchAll();
+
+		return $this->fromRows($rows, 'fileid');
+	}
+
+	/**
 	 * @param array $rows
+	 * @param string|null $key
 	 * @return FolderConfig[]
 	 */
-	public function fromRows(array $rows): array {
+	public function fromRows(array $rows, string $key = 'folder_id'): array {
 		$folders = [];
 
 		foreach ($rows as $row) {
-			$folderId = $row['folder_id'];
-			if (!isset($folders[$folderId])) {
-				$folders[$folderId] = [
-					'id' => (int)$folderId,
+			$folderKey = $row[$key];
+			if (!isset($folders[$folderKey])) {
+				$folders[$folderKey] = [
+					'id' => (int)$row['folder_id'],
 					'source_user' => $row['source_user'],
 					'target_user' => $row['target_user'],
 					'mount_point' => $row['mount_point'],
 					'files' => [],
 				];
 			}
-			$folders[$folderId]['files'][] = (int)$row['file_id'];
+			$folders[$folderKey]['files'][] = (int)$row['file_id'];
 		}
 
 		ksort($folders);
 
-		return array_map(function (array $folder) {
+		$folders = array_map(function (array $folder) {
 			return new FolderConfig($folder['id'], $folder['source_user'], $folder['target_user'], $folder['mount_point'], $folder['files']);
-		}, array_values($folders));
+		}, $folders);
+		if ($key === 'folder_id') {
+			return array_values($folders);
+		} else {
+			return $folders;
+		}
 	}
 }
