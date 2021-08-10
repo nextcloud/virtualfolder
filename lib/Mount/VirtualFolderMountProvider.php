@@ -62,7 +62,7 @@ class VirtualFolderMountProvider implements IMountProvider {
 	private function getMountsForFolder(VirtualFolder $folder, IStorageFactory $loader, IUser $user): array {
 		$baseMount = '/' . $user->getUID() . '/files/' . trim($folder->getMountPoint(), '/');
 		$mounts = [
-			new VirtualFolderMount(EmptyStorage::class, $baseMount, [], $loader),
+			new VirtualFolderRootMount(EmptyStorage::class, $baseMount, ['storage_id' => 'virtual_' . $folder->getId()], $loader),
 		];
 
 		foreach ($folder->getSourceFiles() as $sourceFile) {

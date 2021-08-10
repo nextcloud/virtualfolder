@@ -28,8 +28,16 @@ use OC\Files\Storage\Common;
 use OCP\Constants;
 
 class EmptyStorage extends Common {
+	/** @var string */
+	private $storageId;
+
+	public function __construct($parameters) {
+		parent::__construct($parameters);
+		$this->storageId = $parameters['storage_id'] ?? 'empty';
+	}
+
 	public function getId() {
-		return "empty";
+		return $this->storageId;
 	}
 
 	public function mkdir($path) {
@@ -72,7 +80,7 @@ class EmptyStorage extends Common {
 	}
 
 	public function getPermissions($path) {
-		return Constants::PERMISSION_READ;
+		return Constants::PERMISSION_READ + Constants::PERMISSION_SHARE;
 	}
 
 	public function hasUpdated($path, $time) {
