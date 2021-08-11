@@ -72,7 +72,7 @@ class VirtualFolderFactory {
 			usort($sourceFiles, function (SourceFile $a, SourceFile $b) {
 				return $a->getCacheEntry()->getId() <=> $b->getCacheEntry()->getId();
 			});
-			return new VirtualFolder($sourceFiles, $folder->getMountPoint());
+			return new VirtualFolder($folder->getId(), $sourceFiles, $folder->getMountPoint());
 		}, $folders);
 	}
 
