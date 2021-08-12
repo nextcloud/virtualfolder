@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Folder;
 
-use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;

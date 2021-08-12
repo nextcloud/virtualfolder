@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Listeners;
 
-
 use OCA\Files_Sharing\Event\ShareMountedEvent;
 use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
@@ -54,7 +53,7 @@ class ShareMountedListener implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
-		// add the individual file mounts if a virtual folder root is mounted trough a share
+		// add the individual file mounts if a virtual folder root is mounted through a share
 		if ($event instanceof ShareMountedEvent) {
 			$baseMount = $event->getMount();
 			$share = $baseMount->getShare();
@@ -64,7 +63,9 @@ class ShareMountedListener implements IEventListener {
 				/** @var VirtualFolder $folder */
 				$folder = current($this->folderManager->createFolders([$folderConfig]));
 				$mounts = $this->mountProvider->getMountsForFolder($folder, $this->storageFactory, trim($baseMount->getMountPoint(), '/'));
-				$mounts = array_filter($mounts, function(IMountPoint $mountPoint) {
+
+				// the root folder is already mounted by the share itself
+				$mounts = array_filter($mounts, function (IMountPoint $mountPoint) {
 					return !$mountPoint instanceof VirtualFolderRootMount;
 				});
 				foreach ($mounts as $mount) {
