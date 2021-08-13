@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\VirtualFolder\Mount;
 
 use OC\Files\Storage\Wrapper\Jail;
+use OC\Files\Storage\Wrapper\PermissionsMask;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
 use OCA\VirtualFolder\Folder\SourceFile;
 use OCA\VirtualFolder\Folder\VirtualFolder;
@@ -31,6 +32,7 @@ use OCA\VirtualFolder\Folder\VirtualFolderFactory;
 use OCA\VirtualFolder\Storage\EmptyStorage;
 use OCA\VirtualFolder\Storage\LazyWrapper;
 use OCP\Files\Config\IMountProvider;
+use OCP\Files\Storage\IStorage;
 use OCP\Files\Storage\IStorageFactory;
 use OCP\IUser;
 
@@ -58,22 +60,23 @@ class VirtualFolderMountProvider implements IMountProvider {
 	 * @param VirtualFolder $folder
 	 * @param IStorageFactory $loader
 	 * @param string $baseMount
+	 * @param int|null $permissionsMask
 	 * @return VirtualFolderMount[]
 	 */
-	public function getMountsForFolder(VirtualFolder $folder, IStorageFactory $loader, string $baseMount): array {
+	public function getMountsForFolder(VirtualFolder $folder, IStorageFactory $loader, string $baseMount, int $permissionsMask = null): array {
 		$mounts = [
 			new VirtualFolderRootMount(EmptyStorage::class, $baseMount, ['storage_id' => 'virtual_' . $folder->getId()], $loader),
 		];
 
 		foreach ($folder->getSourceFiles() as $sourceFile) {
-			$mounts[] = new VirtualFolderMount($this->getStorageForSourceFile($sourceFile), $baseMount . '/' . $sourceFile->getCacheEntry()->getName(), [], $loader);
+			$mounts[] = new VirtualFolderMount($this->getStorageForSourceFile($sourceFile, $permissionsMask), $baseMount . '/' . $sourceFile->getCacheEntry()->getName(), [], $loader);
 		}
 
 		return $mounts;
 	}
 
-	private function getStorageForSourceFile(SourceFile $sourceFile): LazyWrapper {
-		return new LazyWrapper([
+	private function getStorageForSourceFile(SourceFile $sourceFile, int $permissionsMask = null): IStorage {
+		$storage = new LazyWrapper([
 			'source_root_info' => $sourceFile->getCacheEntry(),
 			'source_factory' => function () use ($sourceFile) {
 				return new Jail([
@@ -84,5 +87,14 @@ class VirtualFolderMountProvider implements IMountProvider {
 			'storage_id' => $sourceFile->getSourceStorageId(),
 			'owner' => $sourceFile->getSourceUser()->getUID()
 		]);
+
+		if ($permissionsMask !== null) {
+			$storage = new PermissionsMask([
+				'storage' => $storage,
+				'mask' => $permissionsMask
+			]);
+		}
+
+		return $storage;
 	}
 }

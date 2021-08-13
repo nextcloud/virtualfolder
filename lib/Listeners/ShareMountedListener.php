@@ -62,7 +62,7 @@ class ShareMountedListener implements IEventListener {
 			if ($folderConfig) {
 				/** @var VirtualFolder $folder */
 				$folder = current($this->folderManager->createFolders([$folderConfig]));
-				$mounts = $this->mountProvider->getMountsForFolder($folder, $this->storageFactory, trim($baseMount->getMountPoint(), '/'));
+				$mounts = $this->mountProvider->getMountsForFolder($folder, $this->storageFactory, trim($baseMount->getMountPoint(), '/'), $share->getPermissions());
 
 				// the root folder is already mounted by the share itself
 				$mounts = array_filter($mounts, function (IMountPoint $mountPoint) {
