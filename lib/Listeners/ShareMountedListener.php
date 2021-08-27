@@ -69,7 +69,7 @@ class ShareMountedListener implements IEventListener {
 					return !$mountPoint instanceof VirtualFolderRootMount;
 				});
 				foreach ($mounts as $mount) {
-					$event->addMount($mount);
+					$event->addAdditionalMount($mount);
 				}
 			}
 		}

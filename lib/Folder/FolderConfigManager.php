@@ -161,4 +161,13 @@ class FolderConfigManager {
 			return $folders;
 		}
 	}
+
+	public function setMountPoint(int $id, string $mountPoint) {
+		$query = $this->connection->getQueryBuilder();
+		$query->update('virtual_folders')
+			->set('mount_point', $query->createNamedParameter($mountPoint))
+			->where($query->expr()->eq('folder_id', $query->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+		$query->execute();
+	}
+
 }

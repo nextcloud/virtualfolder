@@ -104,4 +104,17 @@ class FolderConfigManagerTest extends TestCase {
 		$this->assertEquals($createdFolder2, $folders[$rootId2]);
 		$this->assertEquals($createdFolder3, $folders[$rootId3]);
 	}
+
+	public function testSetMountPoint() {
+		$createdFolder1 = $this->newFolder('source1', 'target4','source', [10, 20, 30, 40, 50]);
+
+		$folders = $this->configManager->getFoldersForUser('target4');
+		$this->assertCount(1, $folders);
+		$this->assertEquals($createdFolder1, $folders[0]);
+
+		$this->configManager->setMountPoint($createdFolder1->getId(), 'target');
+		$folders = $this->configManager->getFoldersForUser('target4');
+		$this->assertCount(1, $folders);
+		$this->assertEquals('target', $folders[0]->getMountPoint());
+	}
 }

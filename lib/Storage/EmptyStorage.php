@@ -80,7 +80,7 @@ class EmptyStorage extends Common {
 	}
 
 	public function getPermissions($path) {
-		return Constants::PERMISSION_READ + Constants::PERMISSION_SHARE;
+		return Constants::PERMISSION_READ + Constants::PERMISSION_SHARE + Constants::PERMISSION_UPDATE;
 	}
 
 	public function hasUpdated($path, $time) {
