@@ -24,6 +24,7 @@ namespace OCA\VirtualFolder\AppInfo;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Files_Sharing\Event\ShareMountedEvent;
 use OCA\VirtualFolder\Listeners\LoadAdditionalScriptsListener;
+use OCA\VirtualFolder\Listeners\NodeDeletedListener;
 use OCA\VirtualFolder\Listeners\ShareMountedListener;
 use OCA\VirtualFolder\Mount\VirtualFolderMountProvider;
 use \OCP\AppFramework\App;
@@ -31,6 +32,7 @@ use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\Files\Config\IMountProviderCollection;
+use OCP\Files\Events\Node\NodeDeletedEvent;
 
 class Application extends App implements IBootstrap {
 	public function __construct(array $urlParams = []) {
@@ -40,6 +42,7 @@ class Application extends App implements IBootstrap {
 	public function register(IRegistrationContext $context): void {
 		$context->registerEventListener(LoadAdditionalScriptsEvent::class, LoadAdditionalScriptsListener::class);
 		$context->registerEventListener(ShareMountedEvent::class, ShareMountedListener::class);
+		$context->registerEventListener(NodeDeletedEvent::class, NodeDeletedListener::class);
 	}
 
 	public function boot(IBootContext $context): void {

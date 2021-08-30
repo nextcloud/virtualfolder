@@ -170,4 +170,10 @@ class FolderConfigManager {
 		$query->execute();
 	}
 
+	public function removeSourceFile(int $fileId) {
+		$query = $this->connection->getQueryBuilder();
+		$query->delete('virtual_folder_files')
+			->where($query->expr()->eq('file_id', $query->createNamedParameter($fileId, IQueryBuilder::PARAM_INT)));
+		$query->execute();
+	}
 }
