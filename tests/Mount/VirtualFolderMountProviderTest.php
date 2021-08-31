@@ -23,8 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Tests\Mount;
 
-
-use OC\Files\Storage\StorageFactory;
 use OC\Files\Storage\Temporary;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
 use OCA\VirtualFolder\Folder\SourceFile;

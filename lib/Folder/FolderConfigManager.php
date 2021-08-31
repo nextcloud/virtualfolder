@@ -43,7 +43,7 @@ class FolderConfigManager {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('folder.folder_id', 'source_user', 'target_user', 'mount_point', 'file_id')
 			->from('virtual_folders', 'folder')
-			->innerJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'))
+			->leftJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'))
 			->where($query->expr()->eq('target_user', $query->createNamedParameter($targetUserId)));
 		$rows = $query->execute()->fetchAll();
 
@@ -57,7 +57,7 @@ class FolderConfigManager {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('folder.folder_id', 'source_user', 'target_user', 'mount_point', 'file_id')
 			->from('virtual_folders', 'folder')
-			->innerJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'));
+			->leftJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'));
 		$rows = $query->execute()->fetchAll();
 
 		return $this->fromRows($rows);
@@ -122,7 +122,7 @@ class FolderConfigManager {
 				$query->expr()->eq('path_hash', $query->expr()->literal(md5(''))),
 				$query->expr()->eq('s.numeric_id', 'f.storage')
 			))
-			->innerJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'));
+			->leftJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'));
 		$rows = $query->execute()->fetchAll();
 
 		return $this->fromRows($rows, 'fileid');
@@ -147,7 +147,9 @@ class FolderConfigManager {
 					'files' => [],
 				];
 			}
-			$folders[$folderKey]['files'][] = (int)$row['file_id'];
+			if ($row['file_id']) {
+				$folders[$folderKey]['files'][] = (int)$row['file_id'];
+			}
 		}
 
 		ksort($folders);
