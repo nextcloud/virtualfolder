@@ -22,11 +22,8 @@ declare(strict_types=1);
  */
 namespace OCA\VirtualFolder\Sabre;
 
-use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
-use OCA\VirtualFolder\Folder\VirtualFolderFactory;
-use OCA\VirtualFolder\Mount\VirtualFolderMountProvider;
 use OCP\Files\IRootFolder;
 use OCP\IUser;
 use Sabre\DAV\Exception\Forbidden;
@@ -95,7 +92,7 @@ class VirtualFolderHome implements ICollection {
 	 */
 	public function getChildren(): array {
 		$folders = $this->configManager->getFoldersForUser($this->user->getUID());
-		return array_map(function(FolderConfig $folder) {
+		return array_map(function (FolderConfig $folder) {
 			return new FolderRoot($this->configManager, $folder, $this->rootFolder);
 		}, $folders);
 	}

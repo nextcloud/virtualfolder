@@ -55,7 +55,7 @@ abstract class AbstractNode implements INode {
 	public static function new(Node $node) {
 		if ($node instanceof Folder) {
 			return new NodeFolder($node);
-		} else if ($node instanceof File) {
+		} elseif ($node instanceof File) {
 			return new NodeFile($node);
 		} else {
 			throw new \Exception("Invalid node, neither file nor folder");
@@ -65,7 +65,7 @@ abstract class AbstractNode implements INode {
 	public static function newTopLevel(Node $node, FolderConfigManager $folderConfigManager) {
 		if ($node instanceof Folder) {
 			return new TopLevelNodeFolder($node, $folderConfigManager);
-		} else if ($node instanceof File) {
+		} elseif ($node instanceof File) {
 			return new TopLevelNodeFile($node, $folderConfigManager);
 		} else {
 			throw new \Exception("Invalid node, neither file nor folder");

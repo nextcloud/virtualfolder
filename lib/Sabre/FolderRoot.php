@@ -113,6 +113,4 @@ class FolderRoot implements ICollection, ICopyTarget {
 		}
 		throw new \Exception("Can't add file to virtual folder, only files from $uid can be added");
 	}
-
-
 }

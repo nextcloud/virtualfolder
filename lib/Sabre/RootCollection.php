@@ -22,12 +22,8 @@ declare(strict_types=1);
  */
 namespace OCA\VirtualFolder\Sabre;
 
-use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
-use OCA\VirtualFolder\Folder\VirtualFolderFactory;
-use OCA\VirtualFolder\Mount\VirtualFolderMountProvider;
 use OCP\Files\IRootFolder;
-use OCP\IConfig;
 use OCP\IUserSession;
 use Sabre\DAV\INode;
 use Sabre\DAVACL\AbstractPrincipalCollection;

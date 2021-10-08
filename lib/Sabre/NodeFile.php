@@ -52,6 +52,4 @@ class NodeFile extends AbstractNode implements IFile {
 	public function getSize() {
 		return $this->node->getSize();
 	}
-
-
 }

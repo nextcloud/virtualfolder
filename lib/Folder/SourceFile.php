@@ -55,7 +55,7 @@ class SourceFile {
 		$rootFolder = ($this->rootFolderFactory)();
 		$userFolder = $rootFolder->getUserFolder($this->sourceUser->getUID());
 		$nodes = $userFolder->getById($this->cacheEntry->getId());
-		$nodes = array_filter($nodes, function(Node $node) {
+		$nodes = array_filter($nodes, function (Node $node) {
 			return !$node->getStorage()->instanceOfStorage(LazyWrapper::class);
 		});
 		if ($node = current($nodes)) {
