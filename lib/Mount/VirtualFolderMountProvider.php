@@ -50,9 +50,8 @@ class VirtualFolderMountProvider implements IMountProvider {
 	public function getMountsForUser(IUser $user, IStorageFactory $loader): array {
 		$folderConfigs = $this->configManager->getFoldersForUser($user->getUID());
 		$folders = $this->factory->createFolders($folderConfigs);
-		return array_merge([], ...array_map(function (VirtualFolder $folder) use ($loader, $user) {
-			$baseMount = '/' . $user->getUID() . '/files/' . trim($folder->getMountPoint(), '/');
-			return $this->getMountsForFolder($folder, $loader, $baseMount);
+		return array_merge([], ...array_map(function (VirtualFolder $folder) use ($loader) {
+			return $this->getMountsForFolder($folder, $loader, trim($folder->getMountPoint(), '/'));
 		}, $folders));
 	}
 
