@@ -21,6 +21,7 @@
 
 namespace OCA\VirtualFolder\AppInfo;
 
+use OCA\DAV\Connector\Sabre\Principal;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Files_Sharing\Event\ShareMountedEvent;
 use OCA\VirtualFolder\Listeners\LoadAdditionalScriptsListener;
@@ -43,6 +44,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(LoadAdditionalScriptsEvent::class, LoadAdditionalScriptsListener::class);
 		$context->registerEventListener(ShareMountedEvent::class, ShareMountedListener::class);
 		$context->registerEventListener(NodeDeletedEvent::class, NodeDeletedListener::class);
+		/** Register $principalBackend for the DAV collection */
+		$context->registerServiceAlias('principalBackend', Principal::class);
 	}
 
 	public function boot(IBootContext $context): void {

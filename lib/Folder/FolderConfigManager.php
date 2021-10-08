@@ -93,13 +93,7 @@ class FolderConfigManager {
 		$folderId = $query->getLastInsertId();
 
 		foreach ($fileIds as $fileId) {
-			$query = $this->connection->getQueryBuilder();
-			$query->insert('virtual_folder_files')
-				->values([
-					'folder_id' => $query->createNamedParameter($folderId, IQueryBuilder::PARAM_INT),
-					'file_id' => $query->createNamedParameter($fileId, IQueryBuilder::PARAM_INT),
-				]);
-			$query->execute();
+			$this->addSourceFile($folderId, $fileId);
 		}
 
 		return new FolderConfig($folderId, $sourceUserId, $targetUserId, $mountPoint, $fileIds);
@@ -176,6 +170,16 @@ class FolderConfigManager {
 		$query = $this->connection->getQueryBuilder();
 		$query->delete('virtual_folder_files')
 			->where($query->expr()->eq('file_id', $query->createNamedParameter($fileId, IQueryBuilder::PARAM_INT)));
+		$query->execute();
+	}
+
+	public function addSourceFile(int $folderId, int $fileId) {
+		$query = $this->connection->getQueryBuilder();
+		$query->insert('virtual_folder_files')
+			->values([
+				'folder_id' => $query->createNamedParameter($folderId, IQueryBuilder::PARAM_INT),
+				'file_id' => $query->createNamedParameter($fileId, IQueryBuilder::PARAM_INT),
+			]);
 		$query->execute();
 	}
 }

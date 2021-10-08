@@ -11,6 +11,7 @@
 	<version>0.1.0</version>
 	<types>
 		<filesystem/>
+		<dav/>
 	</types>
 
 	<dependencies>
@@ -29,4 +30,10 @@
 		<command>OCA\VirtualFolder\Command\Create</command>
 		<command>OCA\VirtualFolder\Command\Delete</command>
 	</commands>
+
+	<sabre>
+		<collections>
+			<collection>OCA\VirtualFolder\Sabre\RootCollection</collection>
+		</collections>
+	</sabre>
 </info>

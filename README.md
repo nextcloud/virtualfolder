@@ -48,6 +48,43 @@ in `lib/Mount/VirtualFolderMountProvider` to wrap the created `Jail` storage wra
 to apply a mask to the permissions for the files in the virtual folder.
 
 
+## DAV api
+
+virtual folders are exposed trough webdav under the `virtualfolder` endpoint.
+
+### Creating a folder
+
+```bash
+curl -u user:password -X MKCOL 'https://cloud.example.com/dav/virtualfolder/user/my_folder_name
+```
+
+Note: virtual folders created trough webdav will not mounted within the users home directory and thus will not be visible in the normal files UI.
+
+### Listing available folders
+
+```bash
+curl -u user:password -X PROPFIND 'https://cloud.example.com/dav/virtualfolder/user
+```
+
+### Adding a file to a folder
+
+```bash
+curl -X COPY -u user:password -H 'Destination: https://cloud.example.com/dav/virtualfolder/user/my_folder_name/file.txt' 'https://cloud.example.com/remote.php/dav/files/user/file.txt'
+```
+
+### Listing the contents of a folder
+
+```bash
+curl -u user:password -X PROPFIND 'https://cloud.example.com/dav/virtualfolder/user/my_folder_name
+```
+
+
+### Removing a file from a folder
+
+```bash
+curl -u user:password -X DELETE 'https://cloud.example.com/dav/virtualfolder/user/my_folder_name/file.txt
+```
+
 ## Code overview
 
 - `AppInfo`
