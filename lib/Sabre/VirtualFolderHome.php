@@ -25,6 +25,7 @@ namespace OCA\VirtualFolder\Sabre;
 use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
 use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
 use OCP\IUser;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Exception\NotFound;
@@ -74,7 +75,13 @@ class VirtualFolderHome implements ICollection {
 
 	public function createDirectory($name) {
 		$uid = $this->user->getUID();
-		$this->configManager->newFolder($uid, $uid, "/$uid/virtualfolder/$name", []);
+		$hiddenFolder = $this->rootFolder->getHiddenUserFolder($uid);
+		try {
+			$virtualRootFolder = $hiddenFolder->get("virtualfolder");
+		} catch (NotFoundException $e) {
+			$virtualRootFolder = $hiddenFolder->newFolder("virtualfolder");
+		}
+		$this->configManager->newFolder($uid, $uid, $virtualRootFolder->getPath() . "/$name", []);
 	}
 
 	public function getChild($name) {
