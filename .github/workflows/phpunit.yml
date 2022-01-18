@@ -14,7 +14,7 @@ jobs:
       matrix:
         php-versions: ['8.0']
         databases: ['sqlite']
-        server-versions: ['stable21', 'stable22', 'master']
+        server-versions: ['hidden-folder']
 
     name: php${{ matrix.php-versions }}-${{ matrix.databases }}-${{ matrix.server-versions }}
 
