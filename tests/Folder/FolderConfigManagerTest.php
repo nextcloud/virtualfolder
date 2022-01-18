@@ -41,46 +41,45 @@ class FolderConfigManagerTest extends TestCase {
 		$this->configManager = new FolderConfigManager(\OC::$server->get(IDBConnection::class));
 	}
 
-	private function newFolder(string $sourceUserId, string $targetUserId, string $mountPoint, array $fileIds): FolderConfig {
-		$createdFolder = $this->configManager->newFolder($sourceUserId, $targetUserId,$mountPoint, $fileIds);
-		$this->assertEquals($sourceUserId, $createdFolder->getSourceUserId());
-		$this->assertEquals($targetUserId, $createdFolder->getTargetUserId());
+	private function newFolder(string $userId, string $mountPoint, array $fileIds): FolderConfig {
+		$createdFolder = $this->configManager->newFolder($userId, $mountPoint, $fileIds);
+		$this->assertEquals($userId, $createdFolder->getUserId());
 		$this->assertEquals($mountPoint, $createdFolder->getMountPoint());
 		$this->assertEquals($fileIds, $createdFolder->getSourceFileIds());
 		return $createdFolder;
 	}
 
 	public function testCreateGet() {
-		$createdFolder = $this->newFolder('source1', 'target1','create_get', [10, 20, 30, 40, 50]);
+		$createdFolder = $this->newFolder('user1',  'create_get', [10, 20, 30, 40, 50]);
 
-		$folders = $this->configManager->getFoldersForUser('target1');
+		$folders = $this->configManager->getFoldersForUser('user1');
 		$this->assertCount(1, $folders);
 		$this->assertEquals($createdFolder, $folders[0]);
 	}
 
 	public function testGetMultiple() {
-		$createdFolder1 = $this->newFolder('source1', 'target2','get_multiple1', [10, 20, 30, 40, 50]);
-		$createdFolder2 = $this->newFolder('source2', 'target2','get_multiple2', [11, 21, 31, 41, 51]);
-		$createdFolder3 = $this->newFolder('source2', 'target3','get_multiple3', [12, 22, 32, 42, 52]);
+		$createdFolder1 = $this->newFolder('multi1', 'get_multiple1', [10, 20, 30, 40, 50]);
+		$createdFolder2 = $this->newFolder('multi1', 'get_multiple2', [11, 21, 31, 41, 51]);
+		$createdFolder3 = $this->newFolder('multi2', 'get_multiple3', [12, 22, 32, 42, 52]);
 
-		$folders = $this->configManager->getFoldersForUser('target2');
+		$folders = $this->configManager->getFoldersForUser('multi1');
 		$this->assertCount(2, $folders);
 		$this->assertEquals($createdFolder1, $folders[0]);
 		$this->assertEquals($createdFolder2, $folders[1]);
 	}
 
 	public function testGetEmpty() {
-		$createdFolder = $this->newFolder('empty_source', 'empty_target','empty', []);
+		$createdFolder = $this->newFolder('empty', 'empty', []);
 
-		$folders = $this->configManager->getFoldersForUser('empty_target');
+		$folders = $this->configManager->getFoldersForUser('empty');
 		$this->assertCount(1, $folders);
 		$this->assertEquals($createdFolder, $folders[0]);
 	}
 
 	public function testDelete() {
-		$createdFolder1 = $this->newFolder('source1', 'target4','delete', [10, 20, 30, 40, 50]);
+		$createdFolder1 = $this->newFolder('user4', 'delete', [10, 20, 30, 40, 50]);
 
-		$folders = $this->configManager->getFoldersForUser('target4');
+		$folders = $this->configManager->getFoldersForUser('user4');
 		$this->assertCount(1, $folders);
 		$this->assertEquals($createdFolder1, $folders[0]);
 
@@ -98,10 +97,10 @@ class FolderConfigManagerTest extends TestCase {
 	}
 
 	public function testGetMultipleByRootId() {
-		$createdFolder1 = $this->newFolder('source1', 'target2','get_multiple1', [10, 20, 30, 40, 50]);
-		$createdFolder2 = $this->newFolder('source2', 'target2','get_multiple2', [11, 21, 31, 41, 51]);
-		$createdFolder3 = $this->newFolder('source2', 'target3','get_multiple3', [12, 22, 32, 42, 52]);
-		$createdFolder4 = $this->newFolder('source2', 'target3','get_multiple_empty', []);
+		$createdFolder1 = $this->newFolder('user1', 'get_multiple1', [10, 20, 30, 40, 50]);
+		$createdFolder2 = $this->newFolder('user2', 'get_multiple2', [11, 21, 31, 41, 51]);
+		$createdFolder3 = $this->newFolder('user2', 'get_multiple3', [12, 22, 32, 42, 52]);
+		$createdFolder4 = $this->newFolder('user2', 'get_multiple_empty', []);
 
 		$rootId1 = $this->scanVirtualRoot($createdFolder1->getId());
 		$rootId2 = $this->scanVirtualRoot($createdFolder2->getId());
@@ -117,14 +116,14 @@ class FolderConfigManagerTest extends TestCase {
 	}
 
 	public function testSetMountPoint() {
-		$createdFolder1 = $this->newFolder('source1', 'target4','source', [10, 20, 30, 40, 50]);
+		$createdFolder1 = $this->newFolder('user5', 'source', [10, 20, 30, 40, 50]);
 
-		$folders = $this->configManager->getFoldersForUser('target4');
+		$folders = $this->configManager->getFoldersForUser('user5');
 		$this->assertCount(1, $folders);
 		$this->assertEquals($createdFolder1, $folders[0]);
 
 		$this->configManager->setMountPoint($createdFolder1->getId(), 'target');
-		$folders = $this->configManager->getFoldersForUser('target4');
+		$folders = $this->configManager->getFoldersForUser('user5');
 		$this->assertCount(1, $folders);
 		$this->assertEquals('target', $folders[0]->getMountPoint());
 	}

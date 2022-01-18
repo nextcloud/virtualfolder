@@ -72,7 +72,7 @@ class VirtualFolderFactoryTest extends TestCase {
 			'mimetype' => 'text/plain',
 		]);
 
-		$config = new FolderConfig(1, "source1", "target1", "foo", [$id1]);
+		$config = new FolderConfig(1, "user1", "foo", [$id1]);
 		$folders = $this->factory->createFolders([$config]);
 		$this->assertCount(1, $folders);
 		$this->assertCount(1, $folders[0]->getSourceFiles());
@@ -98,8 +98,8 @@ class VirtualFolderFactoryTest extends TestCase {
 			'mimetype' => 'text/plain',
 		]);
 
-		$config1 = new FolderConfig(1, "source1", "target1", "foo", [$id1, $id2]);
-		$config2 = new FolderConfig(2, "source2", "target2", "foo", [$id2, $id3]);
+		$config1 = new FolderConfig(1, "user1", "foo", [$id1, $id2]);
+		$config2 = new FolderConfig(2, "user2", "foo", [$id2, $id3]);
 		$folders = $this->factory->createFolders([$config1, $config2]);
 		$this->assertCount(2, $folders);
 		$this->assertCount(2, $folders[0]->getSourceFiles());

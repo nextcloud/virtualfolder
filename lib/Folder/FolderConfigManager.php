@@ -36,15 +36,15 @@ class FolderConfigManager {
 	}
 
 	/**
-	 * @param string $targetUserId
+	 * @param string $userId
 	 * @return FolderConfig[]
 	 */
-	public function getFoldersForUser(string $targetUserId): array {
+	public function getFoldersForUser(string $userId): array {
 		$query = $this->connection->getQueryBuilder();
-		$query->select('folder.folder_id', 'source_user', 'target_user', 'mount_point', 'file_id')
+		$query->select('folder.folder_id', 'user', 'mount_point', 'file_id')
 			->from('virtual_folders', 'folder')
 			->leftJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'))
-			->where($query->expr()->eq('target_user', $query->createNamedParameter($targetUserId)));
+			->where($query->expr()->eq('user', $query->createNamedParameter($userId)));
 		$rows = $query->execute()->fetchAll();
 
 		return $this->fromRows($rows);
@@ -55,7 +55,7 @@ class FolderConfigManager {
 	 */
 	public function getAllFolders(): array {
 		$query = $this->connection->getQueryBuilder();
-		$query->select('folder.folder_id', 'source_user', 'target_user', 'mount_point', 'file_id')
+		$query->select('folder.folder_id', 'user', 'mount_point', 'file_id')
 			->from('virtual_folders', 'folder')
 			->leftJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'));
 		$rows = $query->execute()->fetchAll();
@@ -76,17 +76,15 @@ class FolderConfigManager {
 	}
 
 	/**
-	 * @param string $sourceUserId
-	 * @param string $targetUserId
+	 * @param string $userId
 	 * @param int[] $fileIds
 	 * @return FolderConfig
 	 */
-	public function newFolder(string $sourceUserId, string $targetUserId, string $mountPoint, array $fileIds): FolderConfig {
+	public function newFolder(string $userId, string $mountPoint, array $fileIds): FolderConfig {
 		$query = $this->connection->getQueryBuilder();
 		$query->insert('virtual_folders')
 			->values([
-				'source_user' => $query->createNamedParameter($sourceUserId),
-				'target_user' => $query->createNamedParameter($targetUserId),
+				'user' => $query->createNamedParameter($userId),
 				'mount_point' => $query->createNamedParameter($mountPoint),
 			]);
 		$query->execute();
@@ -96,7 +94,7 @@ class FolderConfigManager {
 			$this->addSourceFile($folderId, $fileId);
 		}
 
-		return new FolderConfig($folderId, $sourceUserId, $targetUserId, $mountPoint, $fileIds);
+		return new FolderConfig($folderId, $userId, $mountPoint, $fileIds);
 	}
 
 	/**
@@ -106,7 +104,7 @@ class FolderConfigManager {
 	 */
 	public function getAllByRootIds(): array {
 		$query = $this->connection->getQueryBuilder();
-		$query->select('folder.folder_id', 'source_user', 'target_user', 'mount_point', 'file_id', 'f.fileid')
+		$query->select('folder.folder_id', 'user', 'mount_point', 'file_id', 'f.fileid')
 			->from('virtual_folders', 'folder')
 			->innerJoin('folder', 'storages', 's', $query->expr()->eq('s.id', $query->func()->concat(
 				$query->expr()->literal("virtual_"),
@@ -135,8 +133,7 @@ class FolderConfigManager {
 			if (!isset($folders[$folderKey])) {
 				$folders[$folderKey] = [
 					'id' => (int)$row['folder_id'],
-					'source_user' => $row['source_user'],
-					'target_user' => $row['target_user'],
+					'user' => $row['user'],
 					'mount_point' => $row['mount_point'],
 					'files' => [],
 				];
@@ -149,7 +146,7 @@ class FolderConfigManager {
 		ksort($folders);
 
 		$folders = array_map(function (array $folder) {
-			return new FolderConfig($folder['id'], $folder['source_user'], $folder['target_user'], $folder['mount_point'], $folder['files']);
+			return new FolderConfig($folder['id'], $folder['user'], $folder['mount_point'], $folder['files']);
 		}, $folders);
 		if ($key === 'folder_id') {
 			return array_values($folders);

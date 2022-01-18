@@ -84,7 +84,7 @@ class VirtualFolderMountProvider implements IMountProvider {
 				]);
 			},
 			'storage_id' => $sourceFile->getSourceStorageId(),
-			'owner' => $sourceFile->getSourceUser()->getUID()
+			'owner' => $sourceFile->getUser()->getUID()
 		]);
 
 		if ($permissionsMask !== null) {

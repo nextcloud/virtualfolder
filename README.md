@@ -4,6 +4,8 @@
 
 Example app for creating virtual folders
 
+⚠  Requires https://github.com/nextcloud/server/pull/29886 ⚠ 
+
 ## Using the app "as is"
 
 The app in it's base form allows the admin to setup virtual folders using occ commands.

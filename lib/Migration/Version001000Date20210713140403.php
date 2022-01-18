@@ -22,11 +22,7 @@ class Version001000Date20210713140403 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 20,
 			]);
-			$table->addColumn('source_user', 'string', [
-				'notnull' => true,
-				'length' => 255,
-			]);
-			$table->addColumn('target_user', 'string', [
+			$table->addColumn('user', 'string', [
 				'notnull' => true,
 				'length' => 255,
 			]);
@@ -35,7 +31,7 @@ class Version001000Date20210713140403 extends SimpleMigrationStep {
 				'length' => 512,
 			]);
 			$table->setPrimaryKey(['folder_id']);
-			$table->addIndex(['target_user'], 'vf_target_user');
+			$table->addIndex(['user'], 'vf_user');
 		}
 
 		if (!$schema->hasTable('virtual_folder_files')) {

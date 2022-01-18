@@ -103,7 +103,7 @@ class FolderRoot implements ICollection, ICopyTarget {
 	}
 
 	public function copyInto($targetName, $sourcePath, INode $sourceNode): bool {
-		$uid = $this->folder->getSourceUserId();
+		$uid = $this->folder->getUserId();
 		if ($sourceNode instanceof DavNode) {
 			$sourceId = $sourceNode->getId();
 			if ($sourceNode->getFileInfo()->getOwner()->getUID() === $uid) {

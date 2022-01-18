@@ -81,7 +81,7 @@ class VirtualFolderHome implements ICollection {
 		} catch (NotFoundException $e) {
 			$virtualRootFolder = $hiddenFolder->newFolder("virtualfolder");
 		}
-		$this->configManager->newFolder($uid, $uid, $virtualRootFolder->getPath() . "/$name", []);
+		$this->configManager->newFolder($uid, $virtualRootFolder->getPath() . "/$name", []);
 	}
 
 	public function getChild($name) {

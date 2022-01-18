@@ -64,11 +64,11 @@ class VirtualFolderFactory {
 			return $this->rootFolderContainer->get(IRootFolder::class);
 		};
 		return array_map(function (FolderConfig $folder) use ($rootFolderFactory) {
-			$sourceUser = $this->userManager->get($folder->getSourceUserId());
-			if ($sourceUser === null) {
+			$user = $this->userManager->get($folder->getUserId());
+			if ($user === null) {
 				throw new NotFoundException("Source user not found for virtual folder");
 			}
-			$sourceFiles = $this->getSourceFilesFromFileIds($sourceUser, $rootFolderFactory, $folder->getSourceFileIds());
+			$sourceFiles = $this->getSourceFilesFromFileIds($user, $rootFolderFactory, $folder->getSourceFileIds());
 			usort($sourceFiles, function (SourceFile $a, SourceFile $b) {
 				return $a->getCacheEntry()->getId() <=> $b->getCacheEntry()->getId();
 			});
@@ -76,18 +76,18 @@ class VirtualFolderFactory {
 		}, $folders);
 	}
 
-	private function getSourceFilesFromFileIds(IUser $sourceUser, callable $rootFolderFactory, array $sourceFileIds): array {
+	private function getSourceFilesFromFileIds(IUser $user, callable $rootFolderFactory, array $sourceFileIds): array {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('fileid', 'storage', 'path', 'parent', 'name', 'mimetype', 'mimepart', 'size', 'mtime', 'storage_mtime', 'encrypted', 'unencrypted_size', 'etag', 'permissions', 'checksum', 'id')
 			->from('filecache', 'f')
 			->innerJoin('f', 'storages', 's', $query->expr()->eq('storage', 'numeric_id'))
 			->where($query->expr()->in('fileid', $query->createNamedParameter($sourceFileIds, IQueryBuilder::PARAM_INT_ARRAY)));
 		$results = $query->execute()->fetchAll();
-		return array_map(function (array $row) use ($rootFolderFactory, $sourceUser) {
+		return array_map(function (array $row) use ($rootFolderFactory, $user) {
 			$row['mimetype'] = $this->mimeTypeLoader->getMimetypeById($row['mimetype']);
 			$row['mimepart'] = $this->mimeTypeLoader->getMimetypeById($row['mimepart']);
 			$cacheEntry = new CacheEntry($row);
-			return new SourceFile($cacheEntry, $row['id'], $rootFolderFactory, $sourceUser);
+			return new SourceFile($cacheEntry, $row['id'], $rootFolderFactory, $user);
 		}, $results);
 	}
 }

@@ -44,14 +44,9 @@ class Create extends Command {
 			->setName('virtualfolder:create')
 			->setDescription('Create a new virtual folder')
 			->addArgument(
-				'source_user',
+				'user',
 				InputArgument::REQUIRED,
-				'User id of the source user for the folder'
-			)
-			->addArgument(
-				'target_user',
-				InputArgument::REQUIRED,
-				'User id of the target user for the folder'
+				'User id of the user to create the folder for'
 			)
 			->addArgument(
 				'mount_point',
@@ -66,12 +61,11 @@ class Create extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$sourceUserId = $input->getArgument('source_user');
-		$targetUserId = $input->getArgument('target_user');
+		$userId = $input->getArgument('user');
 		$mountPoint = $input->getArgument('mount_point');
 		$fileIds = $input->getArgument('file_ids');
 
-		$this->configManager->newFolder($sourceUserId, $targetUserId, $mountPoint, $fileIds);
+		$this->configManager->newFolder($userId, $mountPoint, $fileIds);
 
 		return 0;
 	}

@@ -27,18 +27,15 @@ class FolderConfig {
 	/** @var int */
 	private $id;
 	/** @var string */
-	private $sourceUserId;
-	/** @var string */
-	private $targetUserId;
+	private $userId;
 	/** @var string */
 	private $mountPoint;
 	/** @var int[] */
 	private $sourceFileIds;
 
-	public function __construct(int $id, string $sourceUserId, string $targetUserId, string $mountPoint, array $sourceFileIds) {
+	public function __construct(int $id, string $userId, string $mountPoint, array $sourceFileIds) {
 		$this->id = $id;
-		$this->sourceUserId = $sourceUserId;
-		$this->targetUserId = $targetUserId;
+		$this->userId = $userId;
 		$this->mountPoint = $mountPoint;
 		$this->sourceFileIds = $sourceFileIds;
 	}
@@ -47,12 +44,8 @@ class FolderConfig {
 		return $this->id;
 	}
 
-	public function getSourceUserId(): string {
-		return $this->sourceUserId;
-	}
-
-	public function getTargetUserId(): string {
-		return $this->targetUserId;
+	public function getUserId(): string {
+		return $this->userId;
 	}
 
 	public function getMountPoint(): string {

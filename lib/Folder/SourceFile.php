@@ -38,13 +38,13 @@ class SourceFile {
 	/** @var callable */
 	private $rootFolderFactory;
 	/** @var IUser */
-	private $sourceUser;
+	private $user;
 
-	public function __construct(ICacheEntry $cacheEntry, string $storageId, callable $rootFolderFactory, IUser $sourceUser) {
+	public function __construct(ICacheEntry $cacheEntry, string $storageId, callable $rootFolderFactory, IUser $user) {
 		$this->cacheEntry = $cacheEntry;
 		$this->storageId = $storageId;
 		$this->rootFolderFactory = $rootFolderFactory;
-		$this->sourceUser = $sourceUser;
+		$this->user = $user;
 	}
 
 	public function getCacheEntry(): ICacheEntry {
@@ -53,7 +53,7 @@ class SourceFile {
 
 	public function getSourceStorage(): IStorage {
 		$rootFolder = ($this->rootFolderFactory)();
-		$userFolder = $rootFolder->getUserFolder($this->sourceUser->getUID());
+		$userFolder = $rootFolder->getUserFolder($this->user->getUID());
 		$nodes = $userFolder->getById($this->cacheEntry->getId());
 		$nodes = array_filter($nodes, function (Node $node) {
 			return !$node->getStorage()->instanceOfStorage(LazyWrapper::class);
@@ -70,7 +70,7 @@ class SourceFile {
 		return $this->storageId;
 	}
 
-	public function getSourceUser(): IUser {
-		return $this->sourceUser;
+	public function getUser(): IUser {
+		return $this->user;
 	}
 }

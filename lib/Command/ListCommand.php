@@ -53,8 +53,7 @@ class ListCommand extends Base {
 		$rows = array_map(function (FolderConfig $folder) {
 			return [
 				"id" => $folder->getId(),
-				"source_user" => $folder->getSourceUserId(),
-				"target_user" => $folder->getTargetUserId(),
+				"user" => $folder->getUserId(),
 				"mount_point" => $folder->getMountPoint(),
 				"files" => implode(", ", $folder->getSourceFileIds())
 			];
@@ -70,7 +69,7 @@ class ListCommand extends Base {
 			default:
 				$table = new Table($output);
 				$table
-					->setHeaders(['ID', 'Source User', 'Target User', 'Mountpoint', 'Files'])
+					->setHeaders(['ID', 'User', 'Mountpoint', 'Files'])
 					->setRows($rows)
 				;
 				$table->render();
