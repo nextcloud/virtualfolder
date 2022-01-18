@@ -60,7 +60,8 @@ virtual folders are exposed trough webdav under the `virtualfolder` endpoint.
 curl -u user:password -X MKCOL 'https://cloud.example.com/dav/virtualfolder/user/my_folder_name
 ```
 
-Note: virtual folders created trough webdav will not mounted within the users home directory and thus will not be visible in the normal files UI.
+Note: virtual folders created trough webdav will within the users hidden directory and thus will not be visible in the normal files UI.
+It can still be accessed through the normal filesystem and dav apis at `/.hidden_<instance_id>/my_folder_name/`.  
 
 ### Listing available folders
 
