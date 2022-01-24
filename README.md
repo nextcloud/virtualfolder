@@ -8,7 +8,7 @@ Example app for creating virtual folders
 
 ## Using the app "as is"
 
-The app in it's base form allows the admin to setup virtual folders using occ commands.
+The app in its base form allows the admin to setup virtual folders using occ commands.
 
 Once a folder is configured it will show up at the configured mount point for the target user as a folder
 containing the provided files. The virtual folder itself will be read only while the configured files contained
