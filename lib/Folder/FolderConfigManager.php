@@ -25,6 +25,7 @@ namespace OCA\VirtualFolder\Folder;
 
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\AlreadyExistsException;
 use OCP\IDBConnection;
 
 class FolderConfigManager {
@@ -81,6 +82,13 @@ class FolderConfigManager {
 	 * @return FolderConfig
 	 */
 	public function newFolder(string $userId, string $mountPoint, array $fileIds): FolderConfig {
+		$existingFolders = $this->getFoldersForUser($userId);
+		foreach ($existingFolders as $existingFolder) {
+			if ($existingFolder->getMountPoint() === $mountPoint) {
+				throw new AlreadyExistsException("Virtual folder with given mountpoint already exists for user");
+			}
+		}
+
 		$query = $this->connection->getQueryBuilder();
 		$query->insert('virtual_folders')
 			->values([

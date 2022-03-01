@@ -26,6 +26,7 @@ namespace OCA\VirtualFolder\Tests\Folder;
 use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
 use OCA\VirtualFolder\Storage\EmptyStorage;
+use OCP\Files\AlreadyExistsException;
 use OCP\IDBConnection;
 use Test\TestCase;
 
@@ -126,5 +127,11 @@ class FolderConfigManagerTest extends TestCase {
 		$folders = $this->configManager->getFoldersForUser('user5');
 		$this->assertCount(1, $folders);
 		$this->assertEquals('target', $folders[0]->getMountPoint());
+	}
+
+	public function testCreateDuplicate() {
+		$this->newFolder('duplicate1', 'duplicate', [10, 20, 30, 40, 50]);
+		$this->expectException(AlreadyExistsException::class);
+		$this->newFolder('duplicate1', 'duplicate', [11, 21, 31, 41, 51]);
 	}
 }
