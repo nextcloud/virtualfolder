@@ -30,8 +30,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Create extends Command {
-	/** @var FolderConfigManager */
-	protected $configManager;
+	protected FolderConfigManager $configManager;
 
 	public function __construct(FolderConfigManager $configManager) {
 		parent::__construct();
@@ -65,6 +64,9 @@ class Create extends Command {
 		$mountPoint = $input->getArgument('mount_point');
 		$fileIds = $input->getArgument('file_ids');
 
+		$fileIds = array_map(function ($id) {
+			return (int)$id;
+		}, $fileIds);
 		$this->configManager->newFolder($userId, $mountPoint, $fileIds);
 
 		return 0;
