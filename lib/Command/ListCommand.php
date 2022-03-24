@@ -31,8 +31,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ListCommand extends Base {
-	/** @var FolderConfigManager */
-	protected $configManager;
+	protected FolderConfigManager $configManager;
 
 	public function __construct(FolderConfigManager $configManager) {
 		parent::__construct();

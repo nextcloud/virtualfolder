@@ -30,8 +30,7 @@ use OCP\Files\Node;
 use Sabre\DAV\INode;
 
 abstract class AbstractNode implements INode {
-	/** @var Node */
-	protected $node;
+	protected Node $node;
 
 	/**
 	 * Deleted the current node.

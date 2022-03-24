@@ -37,13 +37,10 @@ use OCP\Files\Storage\IStorageFactory;
 
 class ShareMountedListener implements IEventListener {
 	/** @var array<int, FolderConfig> */
-	private $virtualFoldersByRoot;
-	/** @var IStorageFactory */
-	private $storageFactory;
-	/** @var VirtualFolderFactory */
-	private $folderManager;
-	/** @var VirtualFolderMountProvider */
-	private $mountProvider;
+	private array $virtualFoldersByRoot;
+	private IStorageFactory $storageFactory;
+	private VirtualFolderFactory $folderManager;
+	private VirtualFolderMountProvider $mountProvider;
 
 	public function __construct(FolderConfigManager $folderConfigManager, IStorageFactory $storageFactory, VirtualFolderFactory $folderManager, VirtualFolderMountProvider $mountProvider) {
 		$this->virtualFoldersByRoot = $folderConfigManager->getAllByRootIds();

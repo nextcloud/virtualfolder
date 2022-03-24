@@ -30,12 +30,9 @@ use OCP\Files\Cache\ICacheEntry;
 class LazeCacheWrapper extends CacheWrapper {
 	/** @var callable */
 	private $cacheFactory;
-	/** @var ICacheEntry */
-	private $sourceRootInfo;
-
-	private $rootUnchanged = true;
-
-	private $numericId;
+	private ICacheEntry $sourceRootInfo;
+	private bool $rootUnchanged = true;
+	private int $numericId;
 
 	public function __construct(ICacheEntry $sourceRootInfo, callable $cacheFactory) {
 		$this->cacheFactory = $cacheFactory;

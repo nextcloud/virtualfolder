@@ -32,17 +32,10 @@ use Sabre\DAV\Exception\NotFound;
 use Sabre\DAV\ICollection;
 
 class VirtualFolderHome implements ICollection {
-	/** @var FolderConfigManager */
-	private $configManager;
-
-	/** @var array */
-	private $principalInfo;
-
-	/** @var IUser */
-	private $user;
-
-	/** @var IRootFolder */
-	private $rootFolder;
+	private FolderConfigManager $configManager;
+	private array $principalInfo;
+	private IUser $user;
+	private IRootFolder $rootFolder;
 
 	public function __construct(
 		array $principalInfo,

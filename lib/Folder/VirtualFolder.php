@@ -24,12 +24,10 @@ declare(strict_types=1);
 namespace OCA\VirtualFolder\Folder;
 
 class VirtualFolder {
-	/** @var int */
-	private $id;
+	private int $id;
 	/** @var SourceFile[] */
-	private $sourceFiles = [];
-	/** @var string */
-	private $mountPoint;
+	private array $sourceFiles = [];
+	private string $mountPoint;
 
 	public function __construct(int $id, array $sourceFiles, string $mountPoint) {
 		$this->id = $id;

@@ -31,7 +31,7 @@ use Sabre\DAV\ICollection;
 
 class NodeFolder extends AbstractNode implements ICollection {
 	/** @var Folder */
-	protected $node;
+	protected Node $node;
 
 	public function __construct(Folder $node) {
 		$this->node = $node;

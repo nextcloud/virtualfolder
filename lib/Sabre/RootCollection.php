@@ -30,12 +30,9 @@ use Sabre\DAVACL\AbstractPrincipalCollection;
 use Sabre\DAVACL\PrincipalBackend;
 
 class RootCollection extends AbstractPrincipalCollection {
-	/** @var FolderConfigManager */
-	private $configManager;
-	/** @var IUserSession */
-	private $userSession;
-	/** @var IRootFolder */
-	private $rootFolder;
+	private FolderConfigManager $configManager;
+	private IUserSession $userSession;
+	private IRootFolder $rootFolder;
 
 	public function __construct(
 		FolderConfigManager $configManager,

@@ -30,8 +30,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Delete extends Command {
-	/** @var FolderConfigManager */
-	protected $configManager;
+	protected FolderConfigManager $configManager;
 
 	public function __construct(FolderConfigManager $configManager) {
 		parent::__construct();

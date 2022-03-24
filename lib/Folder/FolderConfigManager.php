@@ -29,8 +29,7 @@ use OCP\Files\AlreadyExistsException;
 use OCP\IDBConnection;
 
 class FolderConfigManager {
-	/** @var IDBConnection */
-	private $connection;
+	private IDBConnection $connection;
 
 	public function __construct(IDBConnection $connection) {
 		$this->connection = $connection;

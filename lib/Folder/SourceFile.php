@@ -31,14 +31,11 @@ use OCP\Files\Storage\IStorage;
 use OCP\IUser;
 
 class SourceFile {
-	/** @var ICacheEntry */
-	private $cacheEntry;
-	/** @var string */
-	private $storageId;
+	private ICacheEntry $cacheEntry;
+	private string $storageId;
 	/** @var callable */
 	private $rootFolderFactory;
-	/** @var IUser */
-	private $user;
+	private IUser $user;
 
 	public function __construct(ICacheEntry $cacheEntry, string $storageId, callable $rootFolderFactory, IUser $user) {
 		$this->cacheEntry = $cacheEntry;

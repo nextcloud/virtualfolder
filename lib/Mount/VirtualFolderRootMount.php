@@ -28,10 +28,8 @@ use OC\Files\Mount\MoveableMount;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
 
 class VirtualFolderRootMount extends MountPoint implements MoveableMount {
-	/** @var FolderConfigManager */
-	private $folderConfig;
-	/** @var int */
-	private $folderId;
+	private FolderConfigManager $folderConfig;
+	private int $folderId;
 
 	public function __construct(
 		FolderConfigManager $folderConfig,

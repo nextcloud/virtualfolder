@@ -27,7 +27,7 @@ use Sabre\DAV\IFile;
 
 class NodeFile extends AbstractNode implements IFile {
 	/** @var File */
-	protected $node;
+	protected \OCP\Files\Node $node;
 
 	public function __construct(File $node) {
 		$this->node = $node;

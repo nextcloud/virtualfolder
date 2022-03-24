@@ -37,10 +37,8 @@ use OCP\Files\Storage\IStorageFactory;
 use OCP\IUser;
 
 class VirtualFolderMountProvider implements IMountProvider {
-	/** @var VirtualFolderFactory */
-	private $factory;
-	/** @var FolderConfigManager */
-	private $configManager;
+	private VirtualFolderFactory $factory;
+	private FolderConfigManager $configManager;
 
 	public function __construct(VirtualFolderFactory $manager, FolderConfigManager $configManager) {
 		$this->factory = $manager;

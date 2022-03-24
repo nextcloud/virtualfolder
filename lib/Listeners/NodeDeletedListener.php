@@ -29,8 +29,7 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\NodeDeletedEvent;
 
 class NodeDeletedListener implements IEventListener {
-	/** @var FolderConfigManager */
-	private $configManager;
+	private FolderConfigManager $configManager;
 
 	public function __construct(FolderConfigManager $configManager) {
 		$this->configManager = $configManager;

@@ -26,6 +26,7 @@ namespace OCA\VirtualFolder\Sabre;
 use OCA\DAV\Connector\Sabre\Node as DavNode;
 use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
@@ -36,12 +37,9 @@ use Sabre\DAV\ICopyTarget;
 use Sabre\DAV\INode;
 
 class FolderRoot implements ICollection, ICopyTarget {
-	/** @var FolderConfigManager */
-	private $configManager;
-	/** @var FolderConfig */
-	private $folder;
-	/** @var IRootFolder */
-	private $rootFolder;
+	private FolderConfigManager $configManager;
+	private FolderConfig $folder;
+	private IRootFolder $rootFolder;
 
 	public function __construct(FolderConfigManager $configManager, FolderConfig $folder, IRootFolder $rootFolder) {
 		$this->configManager = $configManager;
@@ -73,9 +71,13 @@ class FolderRoot implements ICollection, ICopyTarget {
 	public function getChildren(): array {
 		$node = $this->rootFolder->get($this->folder->getMountPoint());
 
-		return array_map(function (Node $entry) {
-			return AbstractNode::newTopLevel($entry, $this->configManager);
-		}, $node->getDirectoryListing());
+		if ($node instanceof Folder) {
+			return array_map(function (Node $entry) {
+				return AbstractNode::newTopLevel($entry, $this->configManager);
+			}, $node->getDirectoryListing());
+		} else {
+			return [];
+		}
 	}
 
 	public function getChild($name): AbstractNode {
@@ -86,7 +88,12 @@ class FolderRoot implements ICollection, ICopyTarget {
 			throw new NotFound($e->getMessage(), 0, $e);
 		}
 
-		return AbstractNode::newTopLevel($node, $this->configManager);
+
+		if ($node instanceof Folder) {
+			return AbstractNode::newTopLevel($node, $this->configManager);
+		} else {
+			throw new NotFound("$name not found");
+		}
 	}
 
 	public function childExists($name): bool {

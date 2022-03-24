@@ -27,8 +27,7 @@ use OCA\VirtualFolder\Folder\FolderConfigManager;
 use OCP\Files\Folder;
 
 class TopLevelNodeFolder extends NodeFolder {
-	/** @var FolderConfigManager */
-	private $configManager;
+	private FolderConfigManager $configManager;
 
 	public function __construct(Folder $node, FolderConfigManager $configManager) {
 		parent::__construct($node);

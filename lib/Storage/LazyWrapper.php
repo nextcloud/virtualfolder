@@ -41,28 +41,17 @@ use OCP\Files\Storage\IStorage;
  * Cache wrapper that doesn't require the source storage to be setup in advance
  */
 class LazyWrapper extends Wrapper {
-	private $initialized = false;
-
-	/** @var ICacheEntry */
-	private $sourceRootInfo;
-
+	private bool $initialized = false;
+	private ICacheEntry $sourceRootInfo;
 	/** @var callable */
 	private $sourceFactory;
-
 	/** @var ICache|null */
 	public $cache = null;
-
 	/** @var IStorage|null */
 	public $storage = null;
-
-	/** @var string */
-	private $storageId;
-
-	/** @var Storage|null */
-	private $storageCache = null;
-
-	/** @var string|null */
-	private $owner;
+	private string $storageId;
+	private ?Storage $storageCache = null;
+	private ?string $owner;
 
 	public function __construct($arguments) {
 		$this->sourceRootInfo = $arguments['source_root_info'];

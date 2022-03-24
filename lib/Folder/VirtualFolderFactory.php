@@ -34,14 +34,10 @@ use OCP\IUserManager;
 use Psr\Container\ContainerInterface;
 
 class VirtualFolderFactory {
-	/** @var IDBConnection */
-	private $connection;
-	/** @var ContainerInterface */
-	private $rootFolderContainer;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var IMimeTypeLoader */
-	private $mimeTypeLoader;
+	private IDBConnection $connection;
+	private ContainerInterface $rootFolderContainer;
+	private IUserManager $userManager;
+	private IMimeTypeLoader $mimeTypeLoader;
 
 	public function __construct(
 		IDBConnection $connection,

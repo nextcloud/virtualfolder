@@ -28,8 +28,7 @@ use OC\Files\Storage\Common;
 use OCP\Constants;
 
 class EmptyStorage extends Common {
-	/** @var string */
-	private $storageId;
+	private string $storageId;
 
 	public function __construct($parameters) {
 		parent::__construct($parameters);
