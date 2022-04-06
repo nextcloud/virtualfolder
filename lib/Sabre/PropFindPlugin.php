@@ -46,4 +46,3 @@ class PropFindPlugin extends ServerPlugin {
 		$this->server->emit('propFind', [$propFind, $node->getSource()]);
 	}
 }
-

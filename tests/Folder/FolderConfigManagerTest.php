@@ -51,7 +51,7 @@ class FolderConfigManagerTest extends TestCase {
 	}
 
 	public function testCreateGet() {
-		$createdFolder = $this->newFolder('user1',  'create_get', [10, 20, 30, 40, 50]);
+		$createdFolder = $this->newFolder('user1', 'create_get', [10, 20, 30, 40, 50]);
 
 		$folders = $this->configManager->getFoldersForUser('user1');
 		$this->assertCount(1, $folders);
@@ -141,7 +141,7 @@ class FolderConfigManagerTest extends TestCase {
 	}
 
 	public function testAddDuplicateFileId() {
-		$createdFolder = $this->newFolder('user6',  'add_duplicate', [10, 20, 30]);
+		$createdFolder = $this->newFolder('user6', 'add_duplicate', [10, 20, 30]);
 		$this->configManager->addSourceFile($createdFolder->getId(), 30);
 		$this->configManager->addSourceFile($createdFolder->getId(), 40);
 		$this->configManager->addSourceFile($createdFolder->getId(), 40);
@@ -152,13 +152,12 @@ class FolderConfigManagerTest extends TestCase {
 	}
 
 	public function testRemove() {
-		$createdFolder1 = $this->newFolder('user7',  'remove1', [10, 20]);
-		$createdFolder2 = $this->newFolder('user7',  'remove2', [20, 30]);
+		$createdFolder1 = $this->newFolder('user7', 'remove1', [10, 20]);
+		$createdFolder2 = $this->newFolder('user7', 'remove2', [20, 30]);
 
 		$this->configManager->removeSourceFile($createdFolder1->getId(), 20);
 
 		$this->assertEquals([10], $this->configManager->getById($createdFolder1->getId())->getSourceFileIds());
 		$this->assertEquals([20, 30], $this->configManager->getById($createdFolder2->getId())->getSourceFileIds());
 	}
-
 }
