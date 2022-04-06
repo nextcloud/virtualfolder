@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Sabre;
 
+use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
 use OCP\Files\Folder;
 use OCP\Files\File;
@@ -61,11 +62,11 @@ abstract class AbstractNode implements INode {
 		}
 	}
 
-	public static function newTopLevel(Node $node, FolderConfigManager $folderConfigManager) {
+	public static function newTopLevel(Node $node, FolderConfig $folder, FolderConfigManager $folderConfigManager) {
 		if ($node instanceof Folder) {
-			return new TopLevelNodeFolder($node, $folderConfigManager);
+			return new TopLevelNodeFolder($node, $folder, $folderConfigManager);
 		} elseif ($node instanceof File) {
-			return new TopLevelNodeFile($node, $folderConfigManager);
+			return new TopLevelNodeFile($node, $folder, $folderConfigManager);
 		} else {
 			throw new \Exception("Invalid node, neither file nor folder");
 		}

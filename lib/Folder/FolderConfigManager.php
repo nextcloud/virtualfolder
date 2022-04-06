@@ -51,6 +51,21 @@ class FolderConfigManager {
 		return $this->fromRows($rows);
 	}
 
+	public function getById(int $id): ?FolderConfig {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('folder.folder_id', 'user', 'mount_point', 'file_id')
+			->from('virtual_folders', 'folder')
+			->leftJoin('folder', 'virtual_folder_files', 'files', $query->expr()->eq('folder.folder_id', 'files.folder_id'))
+			->where($query->expr()->eq('folder.folder_id', $query->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+		$rows = $query->execute()->fetchAll();
+
+		if ($rows) {
+			return $this->fromRows($rows)[0];
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * @return FolderConfig[]
 	 */
@@ -172,7 +187,15 @@ class FolderConfigManager {
 		$query->execute();
 	}
 
-	public function removeSourceFile(int $fileId) {
+	public function removeSourceFile(int $folderId, int $fileId) {
+		$query = $this->connection->getQueryBuilder();
+		$query->delete('virtual_folder_files')
+			->where($query->expr()->eq('file_id', $query->createNamedParameter($fileId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('folder_id', $query->createNamedParameter($folderId, IQueryBuilder::PARAM_INT)));
+		$query->execute();
+	}
+
+	public function removeSourceFileAll(int $fileId) {
 		$query = $this->connection->getQueryBuilder();
 		$query->delete('virtual_folder_files')
 			->where($query->expr()->eq('file_id', $query->createNamedParameter($fileId, IQueryBuilder::PARAM_INT)));

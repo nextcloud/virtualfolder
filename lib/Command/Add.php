@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2021 Robin Appelman <robin@icewind.nl>
+ * @copyright Copyright (c) 2022 Robin Appelman <robin@icewind.nl>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Command;
 
+
 use OCA\VirtualFolder\Folder\FolderConfigManager;
 use OCP\Files\IRootFolder;
 use Symfony\Component\Console\Command\Command;
@@ -30,7 +31,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Create extends Command {
+class Add extends Command {
 	protected FolderConfigManager $configManager;
 	private IRootFolder $rootFolder;
 
@@ -43,17 +44,12 @@ class Create extends Command {
 
 	protected function configure() {
 		$this
-			->setName('virtualfolder:create')
-			->setDescription('Create a new virtual folder')
+			->setName('virtualfolder:add')
+			->setDescription('Add files to a virtual folder')
 			->addArgument(
-				'user',
+				'folder_id',
 				InputArgument::REQUIRED,
-				'User id of the user to create the folder for'
-			)
-			->addArgument(
-				'mount_point',
-				InputArgument::REQUIRED,
-				'Mount point for the virtual folder'
+				'Id of the virtual folder'
 			)
 			->addArgument(
 				'file_ids',
@@ -63,23 +59,31 @@ class Create extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$userId = $input->getArgument('user');
-		$mountPoint = $input->getArgument('mount_point');
+		$folderId = (int)$input->getArgument('folder_id');
+		$folder = $this->configManager->getById($folderId);
+		if (!$folder) {
+			$output->writeln("Folder with id $folderId not found");
+			return 1;
+		}
+		$userId = $folder->getUserId();
+
 		$fileIds = $input->getArgument('file_ids');
 
 		$userFolder = $this->rootFolder->getUserFolder($userId);
 
-		$fileIds = array_map(function ($id) use ($userFolder, $userId, $output) {
-			$id = (int)$id;
-			$nodes = $userFolder->getById($id);
-			if (!$nodes) {
-				$output->writeln("<error>No file with id $id found for $userId, skipping</error>");
-				return null;
+		foreach ($fileIds as $fileId) {
+			$id = (int)$fileId;
+			if (in_array($id, $folder->getSourceFileIds())) {
+				$output->writeln("<error>File $id already in folder, skipping</error>");
+			} else {
+				$nodes = $userFolder->getById($id);
+				if ($nodes) {
+					$this->configManager->addSourceFile($folderId, $id);
+				} else {
+					$output->writeln("<error>No file with id $id found for $userId, skipping</error>");
+				}
 			}
-			return $id;
-		}, $fileIds);
-		$fileIds = array_filter($fileIds);
-		$this->configManager->newFolder($userId, $mountPoint, $fileIds);
+		}
 
 		return 0;
 	}

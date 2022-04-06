@@ -37,7 +37,7 @@ class NodeDeletedListener implements IEventListener {
 
 	public function handle(Event $event): void {
 		if ($event instanceof NodeDeletedEvent) {
-			$this->configManager->removeSourceFile($event->getNode()->getId());
+			$this->configManager->removeSourceFileAll($event->getNode()->getId());
 		}
 	}
 }

@@ -73,7 +73,7 @@ class FolderRoot implements ICollection, ICopyTarget {
 
 		if ($node instanceof Folder) {
 			return array_map(function (Node $entry) {
-				return AbstractNode::newTopLevel($entry, $this->configManager);
+				return AbstractNode::newTopLevel($entry, $this->folder, $this->configManager);
 			}, $node->getDirectoryListing());
 		} else {
 			return [];
@@ -90,7 +90,7 @@ class FolderRoot implements ICollection, ICopyTarget {
 
 
 		if ($node instanceof Folder) {
-			return AbstractNode::newTopLevel($node, $this->configManager);
+			return AbstractNode::newTopLevel($node, $this->folder, $this->configManager);
 		} else {
 			throw new NotFound("$name not found");
 		}

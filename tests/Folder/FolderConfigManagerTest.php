@@ -56,6 +56,11 @@ class FolderConfigManagerTest extends TestCase {
 		$folders = $this->configManager->getFoldersForUser('user1');
 		$this->assertCount(1, $folders);
 		$this->assertEquals($createdFolder, $folders[0]);
+
+		$folder = $this->configManager->getById($createdFolder->getId());
+		$this->assertEquals($createdFolder, $folder);
+
+		$this->assertEquals(null, $this->configManager->getById(999999));
 	}
 
 	public function testGetMultiple() {
@@ -144,6 +149,16 @@ class FolderConfigManagerTest extends TestCase {
 		$folders = $this->configManager->getFoldersForUser('user6');
 		$this->assertCount(1, $folders);
 		$this->assertEquals([10, 20, 30, 40], $folders[0]->getSourceFileIds());
+	}
+
+	public function testRemove() {
+		$createdFolder1 = $this->newFolder('user7',  'remove1', [10, 20]);
+		$createdFolder2 = $this->newFolder('user7',  'remove2', [20, 30]);
+
+		$this->configManager->removeSourceFile($createdFolder1->getId(), 20);
+
+		$this->assertEquals([10], $this->configManager->getById($createdFolder1->getId())->getSourceFileIds());
+		$this->assertEquals([20, 30], $this->configManager->getById($createdFolder2->getId())->getSourceFileIds());
 	}
 
 }

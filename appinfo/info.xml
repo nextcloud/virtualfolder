@@ -15,7 +15,7 @@
 	</types>
 
 	<dependencies>
-		<nextcloud min-version="20" max-version="22"/>
+		<nextcloud min-version="20" max-version="24"/>
 	</dependencies>
 
 	<category>files</category>
@@ -29,6 +29,8 @@
 		<command>OCA\VirtualFolder\Command\ListCommand</command>
 		<command>OCA\VirtualFolder\Command\Create</command>
 		<command>OCA\VirtualFolder\Command\Delete</command>
+		<command>OCA\VirtualFolder\Command\Add</command>
+		<command>OCA\VirtualFolder\Command\Remove</command>
 	</commands>
 
 	<sabre>

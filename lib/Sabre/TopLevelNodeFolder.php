@@ -23,19 +23,22 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Sabre;
 
+use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
 use OCP\Files\Folder;
 
 class TopLevelNodeFolder extends NodeFolder {
 	private FolderConfigManager $configManager;
+	private FolderConfig $folder;
 
-	public function __construct(Folder $node, FolderConfigManager $configManager) {
+	public function __construct(Folder $node, FolderConfig $folder, FolderConfigManager $configManager) {
 		parent::__construct($node);
 
+		$this->folder = $folder;
 		$this->configManager = $configManager;
 	}
 
 	public function delete() {
-		$this->configManager->removeSourceFile($this->node->getId());
+		$this->configManager->removeSourceFile($this->folder->getId(), $this->node->getId());
 	}
 }
