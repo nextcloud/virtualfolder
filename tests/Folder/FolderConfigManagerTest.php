@@ -134,4 +134,16 @@ class FolderConfigManagerTest extends TestCase {
 		$this->expectException(AlreadyExistsException::class);
 		$this->newFolder('duplicate1', 'duplicate', [11, 21, 31, 41, 51]);
 	}
+
+	public function testAddDuplicateFileId() {
+		$createdFolder = $this->newFolder('user6',  'add_duplicate', [10, 20, 30]);
+		$this->configManager->addSourceFile($createdFolder->getId(), 30);
+		$this->configManager->addSourceFile($createdFolder->getId(), 40);
+		$this->configManager->addSourceFile($createdFolder->getId(), 40);
+
+		$folders = $this->configManager->getFoldersForUser('user6');
+		$this->assertCount(1, $folders);
+		$this->assertEquals([10, 20, 30, 40], $folders[0]->getSourceFileIds());
+	}
+
 }

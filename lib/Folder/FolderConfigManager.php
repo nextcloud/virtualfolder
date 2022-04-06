@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Folder;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\AlreadyExistsException;
@@ -81,6 +82,7 @@ class FolderConfigManager {
 	 * @return FolderConfig
 	 */
 	public function newFolder(string $userId, string $mountPoint, array $fileIds): FolderConfig {
+		$fileIds = array_unique($fileIds);
 		$existingFolders = $this->getFoldersForUser($userId);
 		foreach ($existingFolders as $existingFolder) {
 			if ($existingFolder->getMountPoint() === $mountPoint) {
@@ -184,6 +186,10 @@ class FolderConfigManager {
 				'folder_id' => $query->createNamedParameter($folderId, IQueryBuilder::PARAM_INT),
 				'file_id' => $query->createNamedParameter($fileId, IQueryBuilder::PARAM_INT),
 			]);
-		$query->execute();
+		try {
+			$query->execute();
+		} catch (UniqueConstraintViolationException $e) {
+			// ignore duplicate
+		}
 	}
 }

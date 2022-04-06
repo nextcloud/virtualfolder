@@ -51,6 +51,7 @@ class Version001000Date20210713140403 extends SimpleMigrationStep {
 			]);
 			$table->setPrimaryKey(['folder_file_id']);
 			$table->addIndex(['folder_id'], 'vff_folder');
+			$table->addUniqueIndex(['folder_id', 'file_id'], 'vff_folder_file');
 		}
 
 		return $schema;
