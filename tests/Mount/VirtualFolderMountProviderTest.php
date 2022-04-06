@@ -45,14 +45,10 @@ class VirtualFolderMountProviderTest extends TestCase {
 	use UserTrait;
 	use MountProviderTrait;
 
-	/** @var IStorage */
-	private $sourceStorage;
-	/** @var FolderConfigManager */
-	private $folderConfigManager;
-	/** @var VirtualFolderFactory */
-	private $folderFactory;
-	/** @var VirtualFolderMountProvider */
-	private $virtualMountProvider;
+	private IStorage $sourceStorage;
+	private FolderConfigManager $folderConfigManager;
+	private VirtualFolderFactory $folderFactory;
+	private VirtualFolderMountProvider $virtualMountProvider;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -60,6 +56,7 @@ class VirtualFolderMountProviderTest extends TestCase {
 		$this->createUser('source', 'source');
 		$this->createUser('target', 'target');
 		$this->registerMount('source', $this->sourceStorage, '/source/files/source');
+		$this->loginAsUser('source');
 		$this->folderConfigManager = $this->createMock(FolderConfigManager::class);
 		$this->folderFactory = $this->createMock(VirtualFolderFactory::class);
 		$this->virtualMountProvider = new VirtualFolderMountProvider($this->folderFactory, $this->folderConfigManager);
