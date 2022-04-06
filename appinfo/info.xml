@@ -37,5 +37,8 @@
 		<collections>
 			<collection>OCA\VirtualFolder\Sabre\RootCollection</collection>
 		</collections>
+		<plugins>
+			<plugin>OCA\VirtualFolder\Sabre\PropFindPlugin</plugin>
+		</plugins>
 	</sabre>
 </info>
