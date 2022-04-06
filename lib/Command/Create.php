@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace OCA\VirtualFolder\Command;
 
 use OCA\VirtualFolder\Folder\FolderConfigManager;
+use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,11 +33,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Create extends Command {
 	protected FolderConfigManager $configManager;
+	private IRootFolder $rootFolder;
 
-	public function __construct(FolderConfigManager $configManager) {
+	public function __construct(FolderConfigManager $configManager, IRootFolder $rootFolder) {
 		parent::__construct();
 
 		$this->configManager = $configManager;
+		$this->rootFolder = $rootFolder;
 	}
 
 	protected function configure() {
@@ -64,8 +68,15 @@ class Create extends Command {
 		$mountPoint = $input->getArgument('mount_point');
 		$fileIds = $input->getArgument('file_ids');
 
-		$fileIds = array_map(function ($id) {
-			return (int)$id;
+		$userFolder = $this->rootFolder->getUserFolder($userId);
+
+		$fileIds = array_map(function ($id) use ($userFolder, $userId) {
+			$id = (int)$id;
+			$nodes = $userFolder->getById($id);
+			if (!$nodes) {
+				throw new NotFoundException("No file with id $id found for $userId");
+			}
+			return $id;
 		}, $fileIds);
 		$this->configManager->newFolder($userId, $mountPoint, $fileIds);
 
