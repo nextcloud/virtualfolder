@@ -113,6 +113,9 @@ class FolderRoot implements ICollection, ICopyTarget {
 		$uid = $this->folder->getUserId();
 		if ($sourceNode instanceof DavNode) {
 			$sourceId = $sourceNode->getId();
+			if (in_array($sourceId, $this->folder->getSourceFileIds())) {
+				throw new \Exception("File $sourceId is already in the folder");
+			}
 			if ($sourceNode->getFileInfo()->getOwner()->getUID() === $uid) {
 				$this->configManager->addSourceFile($this->folder->getId(), $sourceId);
 				return true;
