@@ -33,13 +33,14 @@ class NodeFolder extends AbstractNode implements ICollection {
 	/** @var Folder */
 	protected Node $node;
 
-	public function __construct(Folder $node) {
+	public function __construct(Folder $node, Folder $userFolder) {
 		$this->node = $node;
+		$this->userFolder = $userFolder;
 	}
 
 	public function getChildren(): array {
 		return array_map(function (Node $entry) {
-			return AbstractNode::new($entry);
+			return AbstractNode::new($entry, $this->userFolder);
 		}, $this->node->getDirectoryListing());
 	}
 
@@ -50,7 +51,7 @@ class NodeFolder extends AbstractNode implements ICollection {
 			throw new NotFound($e->getMessage(), 0, $e);
 		}
 
-		return AbstractNode::new($node);
+		return AbstractNode::new($node, $this->userFolder);
 	}
 
 	public function childExists($name): bool {

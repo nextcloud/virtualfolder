@@ -36,6 +36,7 @@ use Sabre\DAV\INode;
 
 abstract class AbstractNode implements INode {
 	protected Node $node;
+	protected Folder $userFolder;
 
 	public function getNode(): Node {
 		return $this->node;
@@ -69,23 +70,27 @@ abstract class AbstractNode implements INode {
 		return $this->node->getMTime();
 	}
 
-	public static function new(Node $node) {
+	public static function new(Node $node, Folder $userFolder) {
 		if ($node instanceof Folder) {
-			return new NodeFolder($node);
+			return new NodeFolder($node, $userFolder);
 		} elseif ($node instanceof File) {
-			return new NodeFile($node);
+			return new NodeFile($node, $userFolder);
 		} else {
 			throw new \Exception("Invalid node, neither file nor folder");
 		}
 	}
 
-	public static function newTopLevel(Node $node, FolderConfig $folder, FolderConfigManager $folderConfigManager) {
+	public static function newTopLevel(Node $node, FolderConfig $folder, FolderConfigManager $folderConfigManager, Folder $userFolder) {
 		if ($node instanceof Folder) {
-			return new TopLevelNodeFolder($node, $folder, $folderConfigManager);
+			return new TopLevelNodeFolder($node, $folder, $folderConfigManager, $userFolder);
 		} elseif ($node instanceof File) {
-			return new TopLevelNodeFile($node, $folder, $folderConfigManager);
+			return new TopLevelNodeFile($node, $folder, $folderConfigManager, $userFolder);
 		} else {
 			throw new \Exception("Invalid node, neither file nor folder");
 		}
+	}
+
+	public function getPath(): string {
+		return $this->userFolder->getRelativePath($this->getNode()->getPath());
 	}
 }

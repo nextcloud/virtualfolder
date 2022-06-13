@@ -31,8 +31,8 @@ class TopLevelNodeFolder extends NodeFolder {
 	private FolderConfigManager $configManager;
 	private FolderConfig $folder;
 
-	public function __construct(Folder $node, FolderConfig $folder, FolderConfigManager $configManager) {
-		parent::__construct($node);
+	public function __construct(Folder $node, FolderConfig $folder, FolderConfigManager $configManager, Folder $userFolder) {
+		parent::__construct($node, $userFolder);
 
 		$this->folder = $folder;
 		$this->configManager = $configManager;

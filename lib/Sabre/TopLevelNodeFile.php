@@ -26,13 +26,14 @@ namespace OCA\VirtualFolder\Sabre;
 use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
 use OCP\Files\File;
+use OCP\Files\Folder;
 
 class TopLevelNodeFile extends NodeFile {
 	private FolderConfigManager $configManager;
 	private FolderConfig $folder;
 
-	public function __construct(File $node, FolderConfig $folder, FolderConfigManager $configManager) {
-		parent::__construct($node);
+	public function __construct(File $node, FolderConfig $folder, FolderConfigManager $configManager, Folder $userFolder) {
+		parent::__construct($node, $userFolder);
 
 		$this->folder = $folder;
 		$this->configManager = $configManager;

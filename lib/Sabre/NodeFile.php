@@ -23,14 +23,16 @@ declare(strict_types=1);
 namespace OCA\VirtualFolder\Sabre;
 
 use OCP\Files\File;
+use OCP\Files\Folder;
 use Sabre\DAV\IFile;
 
 class NodeFile extends AbstractNode implements IFile {
 	/** @var File */
 	protected \OCP\Files\Node $node;
 
-	public function __construct(File $node) {
+	public function __construct(File $node, Folder $userFolder) {
 		$this->node = $node;
+		$this->userFolder = $userFolder;
 	}
 
 	public function put($data) {

@@ -24,6 +24,7 @@ namespace OCA\VirtualFolder\Sabre;
 
 use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\IUser;
@@ -36,6 +37,7 @@ class VirtualFolderHome implements ICollection {
 	private array $principalInfo;
 	private IUser $user;
 	private IRootFolder $rootFolder;
+	private Folder $userFolder;
 
 	public function __construct(
 		array $principalInfo,
@@ -47,6 +49,7 @@ class VirtualFolderHome implements ICollection {
 		$this->configManager = $configManager;
 		$this->user = $user;
 		$this->rootFolder = $rootFolder;
+		$this->userFolder = $rootFolder->getUserFolder($user->getUID());
 	}
 
 	public function delete() {
@@ -93,7 +96,7 @@ class VirtualFolderHome implements ICollection {
 	public function getChildren(): array {
 		$folders = $this->configManager->getFoldersForUser($this->user->getUID());
 		return array_map(function (FolderConfig $folder) {
-			return new FolderRoot($this->configManager, $folder, $this->rootFolder);
+			return new FolderRoot($this->configManager, $folder, $this->rootFolder, $this->userFolder);
 		}, $folders);
 	}
 

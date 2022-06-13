@@ -40,11 +40,13 @@ class FolderRoot implements ICollection, ICopyTarget {
 	private FolderConfigManager $configManager;
 	private FolderConfig $folder;
 	private IRootFolder $rootFolder;
+	private Folder $userFolder;
 
-	public function __construct(FolderConfigManager $configManager, FolderConfig $folder, IRootFolder $rootFolder) {
+	public function __construct(FolderConfigManager $configManager, FolderConfig $folder, IRootFolder $rootFolder, Folder $userFolder) {
 		$this->configManager = $configManager;
 		$this->folder = $folder;
 		$this->rootFolder = $rootFolder;
+		$this->userFolder = $userFolder;
 	}
 
 	public function delete() {
@@ -73,7 +75,7 @@ class FolderRoot implements ICollection, ICopyTarget {
 
 		if ($node instanceof Folder) {
 			return array_map(function (Node $entry) {
-				return AbstractNode::newTopLevel($entry, $this->folder, $this->configManager);
+				return AbstractNode::newTopLevel($entry, $this->folder, $this->configManager, $this->userFolder);
 			}, $node->getDirectoryListing());
 		} else {
 			return [];
