@@ -37,7 +37,7 @@ class LazeCacheWrapper extends CacheWrapper {
 	public function __construct(ICacheEntry $sourceRootInfo, callable $cacheFactory) {
 		$this->cacheFactory = $cacheFactory;
 		$this->sourceRootInfo = $sourceRootInfo;
-		$this->numericId = $sourceRootInfo->getStorageId();
+		$this->numericId = (int)$sourceRootInfo->getStorageId();
 
 		parent::__construct(null);
 	}

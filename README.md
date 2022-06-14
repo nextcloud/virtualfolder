@@ -17,8 +17,10 @@ inside will have the full permissions from the source user.
 #### Create a new virtual folder
 
 ```bash
-occ virtualfolder:create <source user> <target user> <mount point> [<file ids>...]
+occ virtualfolder:create <target user> <mount point> [<file ids>...]
 ```
+
+Note that the provided mountpoint is absolute.
 
 #### List created virtual folders
 
@@ -31,6 +33,14 @@ occ virtualfolder:list
 ```bash
 occ virtualfolder:delete <folder id>
 ```
+
+#### Move a virtual folder
+
+```bash
+occ virtualfolder:move <folder id> <new mount point>
+```
+
+Note that the provided mountpoint is absolute.
 
 ## Using the app as a base for your own app
 

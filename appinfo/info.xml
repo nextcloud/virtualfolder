@@ -31,6 +31,7 @@
 		<command>OCA\VirtualFolder\Command\Delete</command>
 		<command>OCA\VirtualFolder\Command\Add</command>
 		<command>OCA\VirtualFolder\Command\Remove</command>
+		<command>OCA\VirtualFolder\Command\Move</command>
 	</commands>
 
 	<sabre>
