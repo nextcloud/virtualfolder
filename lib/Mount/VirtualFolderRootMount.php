@@ -78,4 +78,8 @@ class VirtualFolderRootMount extends MountPoint implements MoveableMount {
 
 		return $split[2];
 	}
+
+	public function getMountProvider(): string {
+		return VirtualFolderMountProvider::class;
+	}
 }

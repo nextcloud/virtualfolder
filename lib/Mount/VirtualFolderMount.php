@@ -32,4 +32,8 @@ class VirtualFolderMount extends MountPoint {
 	public function getMountType() {
 		return 'virtual';
 	}
+
+	public function getMountProvider(): string {
+		return VirtualFolderMountProvider::class;
+	}
 }
