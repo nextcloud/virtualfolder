@@ -30,12 +30,10 @@ use OCP\Files\Folder;
 
 class TopLevelNodeFile extends NodeFile {
 	private FolderConfigManager $configManager;
-	private FolderConfig $folder;
 
 	public function __construct(File $node, FolderConfig $folder, FolderConfigManager $configManager, Folder $userFolder) {
-		parent::__construct($node, $userFolder);
+		parent::__construct($node, $userFolder, $folder);
 
-		$this->folder = $folder;
 		$this->configManager = $configManager;
 	}
 

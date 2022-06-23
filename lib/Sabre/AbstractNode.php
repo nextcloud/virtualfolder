@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Sabre;
 
-use OC\Files\Filesystem;
+use OC\Files\View;
 use OCA\DAV\Connector\Sabre\Directory;
 use OCA\DAV\Connector\Sabre\File as SabreFile;
 use OCA\VirtualFolder\Folder\FolderConfig;
@@ -37,13 +37,14 @@ use Sabre\DAV\INode;
 abstract class AbstractNode implements INode {
 	protected Node $node;
 	protected Folder $userFolder;
+	protected FolderConfig $folder;
 
 	public function getNode(): Node {
 		return $this->node;
 	}
 
 	public function getSource(): INode {
-		$view = Filesystem::getView();
+		$view = new View($this->folder->getMountPoint());
 		if ($this->node->getMimeType() === FileInfo::MIMETYPE_FOLDER) {
 			return new Directory($view, $this->node);
 		} else {
@@ -70,11 +71,11 @@ abstract class AbstractNode implements INode {
 		return $this->node->getMTime();
 	}
 
-	public static function new(Node $node, Folder $userFolder) {
+	public static function new(Node $node, Folder $userFolder, FolderConfig $folder) {
 		if ($node instanceof Folder) {
-			return new NodeFolder($node, $userFolder);
+			return new NodeFolder($node, $userFolder, $folder);
 		} elseif ($node instanceof File) {
-			return new NodeFile($node, $userFolder);
+			return new NodeFile($node, $userFolder, $folder);
 		} else {
 			throw new \Exception("Invalid node, neither file nor folder");
 		}

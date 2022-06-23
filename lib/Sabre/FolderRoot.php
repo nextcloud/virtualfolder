@@ -92,7 +92,7 @@ class FolderRoot implements ICollection, ICopyTarget {
 
 
 		if ($node instanceof Folder) {
-			return AbstractNode::newTopLevel($node, $this->folder, $this->configManager);
+			return AbstractNode::newTopLevel($node, $this->folder, $this->configManager, $this->userFolder);
 		} else {
 			throw new NotFound("$name not found");
 		}

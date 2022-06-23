@@ -29,7 +29,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Move  extends Command {
+class Move extends Command {
 	protected FolderConfigManager $configManager;
 
 	public function __construct(FolderConfigManager $configManager) {

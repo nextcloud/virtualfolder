@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\VirtualFolder\Sabre;
 
+use OCA\VirtualFolder\Folder\FolderConfig;
 use OCP\Files\Folder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
@@ -33,14 +34,15 @@ class NodeFolder extends AbstractNode implements ICollection {
 	/** @var Folder */
 	protected Node $node;
 
-	public function __construct(Folder $node, Folder $userFolder) {
+	public function __construct(Folder $node, Folder $userFolder, FolderConfig $folder) {
 		$this->node = $node;
 		$this->userFolder = $userFolder;
+		$this->folder = $folder;
 	}
 
 	public function getChildren(): array {
 		return array_map(function (Node $entry) {
-			return AbstractNode::new($entry, $this->userFolder);
+			return AbstractNode::new($entry, $this->userFolder, $this->folder);
 		}, $this->node->getDirectoryListing());
 	}
 
@@ -51,7 +53,7 @@ class NodeFolder extends AbstractNode implements ICollection {
 			throw new NotFound($e->getMessage(), 0, $e);
 		}
 
-		return AbstractNode::new($node, $this->userFolder);
+		return AbstractNode::new($node, $this->userFolder, $this->folder);
 	}
 
 	public function childExists($name): bool {
