@@ -17,10 +17,8 @@ inside will have the full permissions from the source user.
 #### Create a new virtual folder
 
 ```bash
-occ virtualfolder:create <target user> <mount point> [<file ids>...]
+occ virtualfolder:create <target user> <name> [<file ids>...]
 ```
-
-Note that the provided mountpoint is absolute.
 
 #### List created virtual folders
 

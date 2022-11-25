@@ -25,6 +25,7 @@ namespace OCA\VirtualFolder\Command;
 
 use OCA\VirtualFolder\Folder\FolderConfigManager;
 use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -51,9 +52,9 @@ class Create extends Command {
 				'User id of the user to create the folder for'
 			)
 			->addArgument(
-				'mount_point',
+				'name',
 				InputArgument::REQUIRED,
-				'Mount point for the virtual folder'
+				'Name for the virtual folder'
 			)
 			->addArgument(
 				'file_ids',
@@ -79,7 +80,15 @@ class Create extends Command {
 			return $id;
 		}, $fileIds);
 		$fileIds = array_filter($fileIds);
-		$this->configManager->newFolder($userId, $mountPoint, $fileIds);
+
+		$hiddenFolder = $this->rootFolder->getHiddenUserFolder($userId);
+		try {
+			$virtualRootFolder = $hiddenFolder->get("virtualfolder");
+		} catch (NotFoundException $e) {
+			$virtualRootFolder = $hiddenFolder->newFolder("virtualfolder");
+		}
+
+		$this->configManager->newFolder($userId, $virtualRootFolder->getPath() . "/" . $mountPoint, $fileIds);
 
 		return 0;
 	}
