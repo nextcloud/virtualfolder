@@ -65,7 +65,7 @@ class Create extends Command {
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$userId = $input->getArgument('user');
-		$mountPoint = $input->getArgument('mount_point');
+		$mountPoint = $input->getArgument('name');
 		$fileIds = $input->getArgument('file_ids');
 
 		$userFolder = $this->rootFolder->getUserFolder($userId);
