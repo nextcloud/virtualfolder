@@ -89,6 +89,7 @@ curl -X COPY -u user:password -H 'Destination: https://cloud.example.com/dav/vir
 curl -u user:password -X PROPFIND 'https://cloud.example.com/dav/virtualfolder/user/my_folder_name
 ```
 
+When listing a folder you can request the `{http://nextcloud.org/ns}canonical-path` property to get the path to the file in the hidden user folder, this path can be used through the normal dav apis.
 
 ### Removing a file from a folder
 

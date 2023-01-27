@@ -36,17 +36,16 @@ use Sabre\DAV\ICollection;
 use Sabre\DAV\ICopyTarget;
 use Sabre\DAV\INode;
 
-class FolderRoot implements ICollection, ICopyTarget {
+class FolderRoot extends AbstractNode implements ICollection, ICopyTarget {
 	private FolderConfigManager $configManager;
-	private FolderConfig $folder;
 	private IRootFolder $rootFolder;
-	private Folder $userFolder;
 
 	public function __construct(FolderConfigManager $configManager, FolderConfig $folder, IRootFolder $rootFolder, Folder $userFolder) {
 		$this->configManager = $configManager;
 		$this->folder = $folder;
 		$this->rootFolder = $rootFolder;
 		$this->userFolder = $userFolder;
+		$this->node = $this->rootFolder->get($this->folder->getMountPoint());
 	}
 
 	public function delete() {
@@ -83,9 +82,8 @@ class FolderRoot implements ICollection, ICopyTarget {
 	}
 
 	public function getChild($name): AbstractNode {
-		$node = $this->rootFolder->get($this->folder->getMountPoint());
 		try {
-			$node = $node->get($name);
+			$node = $this->node->get($name);
 		} catch (NotFoundException $e) {
 			throw new NotFound($e->getMessage(), 0, $e);
 		}

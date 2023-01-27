@@ -29,6 +29,8 @@ use Sabre\DAV\Server;
 use Sabre\DAV\ServerPlugin;
 
 class PropFindPlugin extends ServerPlugin {
+	public const CANONICAL_PATH = '{http://nextcloud.org/ns}canonical-path';
+
 	private Server $server;
 
 	public function initialize(Server $server) {
@@ -42,6 +44,11 @@ class PropFindPlugin extends ServerPlugin {
 		if (!($node instanceof AbstractNode)) {
 			return;
 		}
+
+		$propFind->handle(Self::CANONICAL_PATH, function () use ($node) {
+			// add fake etag, it is only needed to identify the preview image
+			return $node->getPath();
+		});
 
 		$this->server->emit('propFind', [$propFind, $node->getSource()]);
 	}
