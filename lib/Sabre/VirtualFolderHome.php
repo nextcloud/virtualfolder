@@ -24,9 +24,13 @@ namespace OCA\VirtualFolder\Sabre;
 
 use OCA\VirtualFolder\Folder\FolderConfig;
 use OCA\VirtualFolder\Folder\FolderConfigManager;
+use OCA\VirtualFolder\Folder\VirtualFolderFactory;
+use OCA\VirtualFolder\Mount\VirtualFolderMountProvider;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
+use OCP\Files\Mount\IMountManager;
 use OCP\Files\NotFoundException;
+use OCP\Files\Storage\IStorageFactory;
 use OCP\IUser;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Exception\NotFound;
@@ -38,18 +42,30 @@ class VirtualFolderHome implements ICollection {
 	private IUser $user;
 	private IRootFolder $rootFolder;
 	private Folder $userFolder;
+	private VirtualFolderMountProvider $mountProvider;
+	private IStorageFactory $storageFactory;
+	private VirtualFolderFactory $folderFactory;
+	private IMountManager $mountManager;
 
 	public function __construct(
 		array $principalInfo,
 		FolderConfigManager $configManager,
 		IUser $user,
-		IRootFolder $rootFolder
+		IRootFolder $rootFolder,
+		VirtualFolderMountProvider $mountProvider,
+		IStorageFactory $storageFactory,
+		VirtualFolderFactory $folderFactory,
+		IMountManager $mountManager
 	) {
 		$this->principalInfo = $principalInfo;
 		$this->configManager = $configManager;
 		$this->user = $user;
 		$this->rootFolder = $rootFolder;
 		$this->userFolder = $rootFolder->getUserFolder($user->getUID());
+		$this->mountProvider = $mountProvider;
+		$this->storageFactory = $storageFactory;
+		$this->folderFactory = $folderFactory;
+		$this->mountManager = $mountManager;
 	}
 
 	public function delete() {
@@ -77,7 +93,14 @@ class VirtualFolderHome implements ICollection {
 		} catch (NotFoundException $e) {
 			$virtualRootFolder = $hiddenFolder->newFolder("virtualfolder");
 		}
-		$this->configManager->newFolder($uid, $virtualRootFolder->getPath() . "/$name", []);
+		$folderConfig = $this->configManager->newFolder($uid, $virtualRootFolder->getPath() . "/$name", []);
+
+		// add the mount for the folder we just created, so post-hooks can access it
+		[$folder] = $this->folderFactory->createFolders([$folderConfig]);
+		$mounts = $this->mountProvider->getMountsForFolder($folder, $this->storageFactory, trim($folder->getMountPoint(), '/'));
+		foreach ($mounts as $mount) {
+			$this->mountManager->addMount($mount);
+		}
 	}
 
 	public function getChild($name) {

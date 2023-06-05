@@ -23,7 +23,11 @@ declare(strict_types=1);
 namespace OCA\VirtualFolder\Sabre;
 
 use OCA\VirtualFolder\Folder\FolderConfigManager;
+use OCA\VirtualFolder\Folder\VirtualFolderFactory;
+use OCA\VirtualFolder\Mount\VirtualFolderMountProvider;
 use OCP\Files\IRootFolder;
+use OCP\Files\Mount\IMountManager;
+use OCP\Files\Storage\IStorageFactory;
 use OCP\IUserSession;
 use Sabre\DAV\INode;
 use Sabre\DAVACL\AbstractPrincipalCollection;
@@ -33,18 +37,30 @@ class RootCollection extends AbstractPrincipalCollection {
 	private FolderConfigManager $configManager;
 	private IUserSession $userSession;
 	private IRootFolder $rootFolder;
+	private VirtualFolderMountProvider $mountProvider;
+	private IStorageFactory $storageFactory;
+	private VirtualFolderFactory $folderFactory;
+	private IMountManager $mountManager;
 
 	public function __construct(
 		FolderConfigManager $configManager,
 		IUserSession $userSession,
 		IRootFolder $rootFolder,
-		PrincipalBackend\BackendInterface $principalBackend
+		PrincipalBackend\BackendInterface $principalBackend,
+		VirtualFolderMountProvider $mountProvider,
+		IStorageFactory $storageFactory,
+		VirtualFolderFactory $folderFactory,
+		IMountManager $mountManager
 	) {
 		parent::__construct($principalBackend, 'principals/users');
 
 		$this->configManager = $configManager;
 		$this->userSession = $userSession;
 		$this->rootFolder = $rootFolder;
+		$this->mountProvider = $mountProvider;
+		$this->storageFactory = $storageFactory;
+		$this->folderFactory = $folderFactory;
+		$this->mountManager = $mountManager;
 	}
 
 	/**
@@ -63,7 +79,7 @@ class RootCollection extends AbstractPrincipalCollection {
 		if (is_null($user) || $name !== $user->getUID()) {
 			throw new \Sabre\DAV\Exception\Forbidden();
 		}
-		return new VirtualFolderHome($principalInfo, $this->configManager, $user, $this->rootFolder);
+		return new VirtualFolderHome($principalInfo, $this->configManager, $user, $this->rootFolder, $this->mountProvider, $this->storageFactory, $this->folderFactory, $this->mountManager);
 	}
 
 	public function getName(): string {
